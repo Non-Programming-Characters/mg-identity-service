@@ -27,4 +27,9 @@ public class UserConfiguration {
     UserEntityJpaUserEntityMapper userEntityMapper() {
         return new UserEntityJpaUserEntityMapper();
     }
+
+    @Bean
+    UserEntityResponseUserEntityMapper userEntityResponseUserEntityMapper() {
+        return new UserEntityResponseUserEntityMapper();
+    }
 }

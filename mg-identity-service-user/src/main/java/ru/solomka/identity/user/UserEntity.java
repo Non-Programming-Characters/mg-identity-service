@@ -21,6 +21,7 @@ public class UserEntity implements Entity {
 
     @NonNull String passwordHash;
 
+    @NonNull String phoneNumber;
     @NonNull String email;
 
     @NonNull String firstName;
@@ -29,5 +30,4 @@ public class UserEntity implements Entity {
     @NonNull Instant birthDate;
 
     Instant createdAt;
-
 }

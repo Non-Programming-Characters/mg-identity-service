@@ -27,8 +27,13 @@ public class JpaUserEntity {
     @Column(name = "login", nullable = false)
     @NonNull String login;
 
+    // TODO: RSA-256 ON THIS FIELD
     @Column(name = "password_hash", nullable = false)
     @NonNull String passwordHash;
+
+    // TODO: RSA-256 ON THIS FIELD
+    @Column(name = "phone_number", nullable = false)
+    @NonNull String phoneNumber;
 
     @Column(name = "email", nullable = false)
     @NonNull String email;

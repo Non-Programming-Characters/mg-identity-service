@@ -14,6 +14,7 @@ import java.util.List;
 
 @Configuration
 public class ExceptionAdviceConfiguration {
+
     @Bean
     @Order(2)
     ExceptionFormatProvider defaultExceptionFormatProvider() {

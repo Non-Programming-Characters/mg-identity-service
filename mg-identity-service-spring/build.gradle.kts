@@ -25,7 +25,8 @@ dependencies {
         "mg-identity-service-common-jpa",
 
         "mg-identity-service-user",
-        "mg-identity-service-user-spring-jpa-adapter"
+        "mg-identity-service-user-spring-jpa-adapter",
+        "mg-identity-service-user-spring-rest-adapter"
     ).forEach {
         implementation(project(":$it"))
     }
