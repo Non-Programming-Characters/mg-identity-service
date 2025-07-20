@@ -26,7 +26,19 @@ dependencies {
 
         "mg-identity-service-user",
         "mg-identity-service-user-spring-jpa-adapter",
-        "mg-identity-service-user-spring-rest-adapter"
+        "mg-identity-service-user-spring-rest-adapter",
+
+        "mg-identity-service-access-token",
+
+        "mg-identity-service-refresh-token",
+        "mg-identity-service-refresh-token-spring-jpa-adapter",
+        "mg-identity-service-refresh-token-spring-rest-adapter",
+
+        "mg-identity-service-principal",
+        "mg-identity-service-principal-spring-security-adapter",
+
+        "mg-identity-service-token",
+        "mg-identity-service-nimbus-token-adapter"
     ).forEach {
         implementation(project(":$it"))
     }
