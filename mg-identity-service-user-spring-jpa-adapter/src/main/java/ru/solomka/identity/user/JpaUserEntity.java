@@ -24,18 +24,13 @@ public class JpaUserEntity {
     @Column(name = "id", nullable = false)
     UUID id;
 
-    @Column(name = "login", nullable = false)
+    @Column(name = "login", unique = true, nullable = false)
     @NonNull String login;
 
-    // TODO: RSA-256 ON THIS FIELD
     @Column(name = "password_hash", nullable = false)
     @NonNull String passwordHash;
 
-    // TODO: RSA-256 ON THIS FIELD
-    @Column(name = "phone_number", nullable = false)
-    @NonNull String phoneNumber;
-
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     @NonNull String email;
 
     @Column(name = "first_name", nullable = false)
@@ -43,12 +38,6 @@ public class JpaUserEntity {
 
     @Column(name = "last_name", nullable = false)
     @NonNull String lastName;
-
-    @Column(name = "bio", nullable = false)
-    @NonNull String bio;
-
-    @Column(name = "birth_date", nullable = false)
-    @NonNull Instant birthDate;
 
     @Column(name = "created_at", nullable = false)
     Instant createdAt;
