@@ -12,14 +12,8 @@ import lombok.experimental.FieldDefaults;
 public class RegistrationRequest {
 
     @NonNull String login;
-
     @NonNull String password;
-
-    @NonNull String firstName;
-
-    @NonNull String lastName;
-
     @NonNull String email;
-
-    @NonNull String birthDate;
+    @NonNull String firstName;
+    @NonNull String lastName;
 }

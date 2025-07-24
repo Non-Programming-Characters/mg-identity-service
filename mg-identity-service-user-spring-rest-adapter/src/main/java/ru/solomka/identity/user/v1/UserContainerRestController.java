@@ -7,28 +7,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.user.UserEntity;
-import ru.solomka.identity.user.UserEntityResponseUserEntityMapper;
+import ru.solomka.identity.user.UserSearchResponseUserEntityMapper;
 import ru.solomka.identity.user.cqrs.query.GetUserByIdQuery;
-import ru.solomka.identity.user.response.UserEntityResponse;
+import ru.solomka.identity.user.response.UserSearchResponse;
 
 import java.util.UUID;
 
-@RestController("/v1/identity/user")
+@RestController
+@RequestMapping("/v1/security/user")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserContainerRestController {
 
     @NonNull CommandHandler<GetUserByIdQuery, UserEntity> getUserByIdQueryHandler;
-    @NonNull UserEntityResponseUserEntityMapper userEntityResponseUserEntityMapper;
+    @NonNull UserSearchResponseUserEntityMapper userSearchResponseUserEntityMapper;
 
-    @GetMapping
-    public ResponseEntity<UserEntityResponse> getUserById(@RequestParam UUID id) {
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<UserSearchResponse> getUserById(@RequestParam UUID id) {
         UserEntity userEntity = getUserByIdQueryHandler.handle(new GetUserByIdQuery(id));
-        return ResponseEntity.ok(userEntityResponseUserEntityMapper.mapToInfrastructure(userEntity));
+        return ResponseEntity.ok(userSearchResponseUserEntityMapper.mapToInfrastructure(userEntity));
     }
-
 }
