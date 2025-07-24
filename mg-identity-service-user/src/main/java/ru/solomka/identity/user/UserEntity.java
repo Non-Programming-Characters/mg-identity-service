@@ -11,8 +11,9 @@ import java.util.UUID;
 @Setter
 @ToString
 @Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class UserEntity implements Entity {
 
     UUID id;
@@ -21,13 +22,10 @@ public class UserEntity implements Entity {
 
     @NonNull String passwordHash;
 
-    @NonNull String phoneNumber;
     @NonNull String email;
 
     @NonNull String firstName;
     @NonNull String lastName;
-    @NonNull String bio;
-    @NonNull Instant birthDate;
 
     Instant createdAt;
 }

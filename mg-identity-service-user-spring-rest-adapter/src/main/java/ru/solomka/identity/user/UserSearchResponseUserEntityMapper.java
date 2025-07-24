@@ -1,27 +1,24 @@
 package ru.solomka.identity.user;
 
 import ru.solomka.identity.common.mapper.Mapper;
-import ru.solomka.identity.user.response.UserEntityResponse;
+import ru.solomka.identity.user.response.UserSearchResponse;
 
-public class UserEntityResponseUserEntityMapper implements Mapper<UserEntityResponse, UserEntity> {
-
+public class UserSearchResponseUserEntityMapper implements Mapper<UserSearchResponse, UserEntity> {
 
     @Override
-    public UserEntityResponse mapToInfrastructure(UserEntity domainEntity) {
-        return UserEntityResponse.builder()
+    public UserSearchResponse mapToInfrastructure(UserEntity domainEntity) {
+        return UserSearchResponse.builder()
                 .id(domainEntity.getId())
                 .login(domainEntity.getLogin())
                 .email(domainEntity.getEmail())
                 .firstName(domainEntity.getFirstName())
                 .lastName(domainEntity.getLastName())
-                .bio(domainEntity.getBio())
-                .birthDate(domainEntity.getBirthDate())
                 .createdAt(domainEntity.getCreatedAt())
                 .build();
     }
 
     @Override
-    public UserEntity mapToDomain(UserEntityResponse infrastructureEntity) {
+    public UserEntity mapToDomain(UserSearchResponse infrastructureEntity) {
         throw new UnsupportedOperationException();
     }
 }

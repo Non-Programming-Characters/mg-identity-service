@@ -11,20 +11,12 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-public class UserEntityResponse {
+public class UserSearchResponse {
 
-    UUID id;
-
-    @NonNull
-    String login;
-
+    @NonNull UUID id;
+    @NonNull String login;
     @NonNull String email;
-
     @NonNull String firstName;
     @NonNull String lastName;
-    @NonNull String bio;
-    @NonNull
-    Instant birthDate;
-
-    Instant createdAt;
+    @NonNull Instant createdAt;
 }

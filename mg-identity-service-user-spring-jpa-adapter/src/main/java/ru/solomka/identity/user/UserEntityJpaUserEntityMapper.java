@@ -10,12 +10,9 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .id(domainEntity.getId())
                 .login(domainEntity.getLogin())
                 .passwordHash(domainEntity.getPasswordHash())
-                .phoneNumber(domainEntity.getPhoneNumber())
                 .email(domainEntity.getEmail())
                 .firstName(domainEntity.getFirstName())
                 .lastName(domainEntity.getLastName())
-                .bio(domainEntity.getBio())
-                .birthDate(domainEntity.getBirthDate())
                 .createdAt(domainEntity.getCreatedAt())
                 .build();
     }
@@ -26,12 +23,9 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .id(infrastructureEntity.getId())
                 .login(infrastructureEntity.getLogin())
                 .passwordHash(infrastructureEntity.getPasswordHash())
-                .phoneNumber(infrastructureEntity.getPhoneNumber())
                 .email(infrastructureEntity.getEmail())
                 .firstName(infrastructureEntity.getFirstName())
                 .lastName(infrastructureEntity.getLastName())
-                .bio(infrastructureEntity.getBio())
-                .birthDate(infrastructureEntity.getBirthDate())
                 .createdAt(infrastructureEntity.getCreatedAt())
                 .build();
     }

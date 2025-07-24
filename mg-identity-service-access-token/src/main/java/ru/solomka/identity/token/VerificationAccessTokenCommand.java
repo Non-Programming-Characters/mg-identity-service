@@ -1,5 +1,4 @@
-package ru.solomka.identity.user.response;
-
+package ru.solomka.identity.token;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,8 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AuthenticationResponse {
+public class VerificationAccessTokenCommand {
 
     @NonNull String accessToken;
-    @NonNull String refreshToken;
 }
