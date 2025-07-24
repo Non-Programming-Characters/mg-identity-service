@@ -40,4 +40,9 @@ public abstract class EntityService<E extends Entity> {
     public Optional<E> findById(UUID id) {
         return repository.findById(id);
     }
+
+    public E getById(UUID id) {
+        return this.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Entity with id '%s' not found".formatted(id)));
+    }
 }
