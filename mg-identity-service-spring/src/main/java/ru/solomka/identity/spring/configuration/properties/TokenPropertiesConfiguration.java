@@ -9,13 +9,12 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
-@Configuration
-@ConfigurationProperties("service")
 @Getter
 @Setter
+@Configuration
+@ConfigurationProperties(prefix="service")
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TokenPropertiesConfiguration {
 
     @NonNull TokenProperty accessToken;
