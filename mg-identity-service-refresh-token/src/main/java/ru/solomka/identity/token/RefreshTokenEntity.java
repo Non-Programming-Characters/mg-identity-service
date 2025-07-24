@@ -11,8 +11,9 @@ import java.util.UUID;
 @Setter
 @ToString
 @Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 public class RefreshTokenEntity implements Entity {
 
     UUID id;

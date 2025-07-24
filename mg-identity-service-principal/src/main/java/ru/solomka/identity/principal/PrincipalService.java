@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.solomka.identity.principal.exception.PrincipalException;
 
 import java.util.Optional;
 
@@ -23,5 +24,9 @@ public class PrincipalService {
 
     public boolean isAuthenticated() {
         return principalRepository.isAuthenticated();
+    }
+
+    public PrincipalEntity getPrincipal() {
+        return this.findPrincipal().orElseThrow(() -> new PrincipalException("Principal not found"));
     }
 }
