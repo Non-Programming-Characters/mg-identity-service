@@ -19,8 +19,6 @@ dependencies {
     implementation(rootProject.libs.springframework.spring.boot.starter.actuator)
 
     listOf(
-        "mg-identity-service-spring",
-
         "mg-identity-service-common",
         "mg-identity-service-common-jpa",
 
@@ -38,7 +36,10 @@ dependencies {
         "mg-identity-service-principal-spring-security-adapter",
 
         "mg-identity-service-token",
-        "mg-identity-service-nimbus-token-adapter"
+        "mg-identity-service-nimbus-token-adapter",
+
+        "mg-identity-service-authentication",
+        "mg-identity-service-authentication-spring-security-adapter"
     ).forEach {
         implementation(project(":$it"))
     }
