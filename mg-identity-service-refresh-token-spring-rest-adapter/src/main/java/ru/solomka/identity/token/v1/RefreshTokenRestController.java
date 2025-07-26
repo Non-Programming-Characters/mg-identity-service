@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.token.TokenPair;
@@ -21,7 +22,8 @@ import ru.solomka.identity.token.response.TokenPairResponse;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RestController("/v1/security/token")
+@RestController
+@RequestMapping("/v1/security/token")
 public class RefreshTokenRestController {
 
     @NonNull CommandHandler<IssueTokenPairCommand, TokenPair> issueTokenPairCommandHandler;
