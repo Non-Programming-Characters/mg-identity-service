@@ -33,4 +33,4 @@ jobs:
           path: '${{ github.workspace }}/mg-identity-service-spring/build/libs/mg-identity-service-spring.jar'
 
       - name: Run Tests
-        run: .\gradlew testClasses
+        run: ./gradlew testClasses
