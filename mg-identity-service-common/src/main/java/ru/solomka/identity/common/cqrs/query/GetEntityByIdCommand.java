@@ -11,5 +11,6 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @ToString
 public class GetEntityByIdCommand {
-    UUID id;
+
+    @NonNull UUID id;
 }
