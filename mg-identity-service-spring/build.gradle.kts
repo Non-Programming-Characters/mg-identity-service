@@ -53,12 +53,10 @@ dependencies {
         implementation(project(":$it"))
     }
 }
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
 
-    systemProperty("junit.jupiter.testclass.order.default",
-        "org.junit.jupiter.api.ClassOrderer\$ClassName")
+tasks.withType<Test> {
+    testLogging {
+        events("passed", "skipped", "failed", "standardOut", "standardError")
+    }
+    useJUnitPlatform()
 }

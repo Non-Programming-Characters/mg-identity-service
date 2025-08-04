@@ -79,3 +79,10 @@ tasks.withType<Jar> {
         attributes["Main-Class"] = "ru.solomka.identity.spring.MgIdentityService"
     }
 }
+
+tasks.withType<Test> {
+    testLogging {
+        events("passed", "skipped", "failed", "standardOut", "standardError")
+    }
+    useJUnitPlatform()
+}
