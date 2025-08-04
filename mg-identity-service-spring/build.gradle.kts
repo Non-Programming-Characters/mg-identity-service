@@ -18,6 +18,15 @@ dependencies {
 
     implementation(rootProject.libs.springframework.spring.boot.starter.actuator)
 
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage")
+    }
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
     listOf(
         "mg-identity-service-common",
         "mg-identity-service-common-jpa",
@@ -43,4 +52,13 @@ dependencies {
     ).forEach {
         implementation(project(":$it"))
     }
+}
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+
+    systemProperty("junit.jupiter.testclass.order.default",
+        "org.junit.jupiter.api.ClassOrderer\$ClassName")
 }
