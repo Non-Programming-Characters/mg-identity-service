@@ -39,7 +39,7 @@ public class NimbusConfiguration {
                 .replace("-----BEGIN PRIVATE KEY-----", "")
                 .replace("-----END PRIVATE KEY-----", "")
                 .replaceAll("\\s+", "");
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(content));
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(java.util.Base64.getDecoder().decode(content));
         return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
     }
 
@@ -55,7 +55,7 @@ public class NimbusConfiguration {
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s+", "");
-        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64.decodeBase64(content));
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(java.util.Base64.getDecoder().decode(content.getBytes(StandardCharsets.UTF_8)));
         return keyFactory.generatePublic(x509EncodedKeySpec);
     }
 
