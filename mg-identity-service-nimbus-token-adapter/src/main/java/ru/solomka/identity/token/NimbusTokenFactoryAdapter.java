@@ -32,7 +32,7 @@ public class NimbusTokenFactoryAdapter implements TokenFactory {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(principalEntity.getId().toString())
                 .claim(TokenConstraints.JWT_TOKEN_TYPE_NAME, tokenType)
-                .claim(TokenConstraints.JWT_TOKEN_ID_NAME, tokenId)
+                .claim(TokenConstraints.JWT_TOKEN_ID_NAME, tokenId.toString())
                 .issueTime(new Date())
                 .expirationTime(expirationTime)
                 .build();

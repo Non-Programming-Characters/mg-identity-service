@@ -25,16 +25,18 @@ public class NimbusTokenExtractorAdapter implements TokenExtractor {
     @NotNull JWSVerifier jwsVerifier;
 
     @Override
-    public @NotNull TokenEntity extract(@NotNull String token) throws TokenException {
+    public @NotNull TokenEntity extract(@NotNull String token) throws TokenException, TokenParseException, TokenVerificationException, TokenExpiredException {
         try {
             if(!token.startsWith("Bearer"))
                 throw new TokenParseException("Invalid or corrupt token: %s".formatted(token));
+
 
             token = token.replace("Bearer ", "");
             SignedJWT signedJWT = SignedJWT.parse(token);
 
             if (!signedJWT.verify(jwsVerifier))
-                throw new TokenParseException("Invalid or corrupt token signature: %s".formatted(token));
+                throw new TokenVerificationException("Verification token failed: %s".formatted(token));
+
 
             JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
             Date expirationDate = claims.getExpirationTime();
@@ -52,13 +54,14 @@ public class NimbusTokenExtractorAdapter implements TokenExtractor {
                     .userId(userId)
                     .expiredAt(expirationTime)
                     .token(token).tokenType(type).build();
-
-        } catch (ParseException exception) {
+        } catch (ParseException | TokenParseException exception) {
             throw new TokenParseException(exception.getMessage());
-        } catch (JOSEException exception) {
+        } catch (JOSEException | TokenVerificationException exception) {
             throw new TokenVerificationException(exception.getMessage());
+        } catch (TokenExpiredException exception) {
+            throw new TokenExpiredException(exception.getMessage());
         } catch (Exception exception) {
-            throw new TokenParseException("Invalid or corrupt token: %s".formatted(token));
+            throw new TokenException("Unknown error: %s".formatted(token));
         }
     }
 }
