@@ -1,4 +1,4 @@
-package ru.solomka.identity.test;
+package ru.solomka.identity.test.token;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
