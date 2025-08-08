@@ -1,16 +1,24 @@
 # Instructions for deploying the service
 
-> Для развертывания сервиса требуются предустановленные [Docker Dekstop](https://www.docker.com/products/docker-desktop/) & [JDK-21](https://www.oracle.com/java/technologies/downloads/#java21)
+> Для развертывания сервиса требуются предустановленные [Docker Dekstop](https://www.docker.com/products/docker-desktop/) & [JDK-21](https://www.oracle.com/java/technologies/downloads/#java21) & [pgAdmin v9.6](https://www.postgresql.org/ftp/pgadmin/pgadmin4/v9.6/windows/)
 
 Шаги для развертывания сервиса:
 1. Установить и распаковать в свободную директорию исходники проекта
 2. Открыть командную строку от имени администратора
 3. Сменить расположение на ранее созданную папку с исходниками проекта
-4. Ввести следующие команды в строгом порядке:
-```
-docker build -t mg-identity-service .
-docker-compose up
-```
+4. Открыть pgAdmin и создать новый сервер
+6. Зайти в .env-example и изменить следующие строки:
+   ```
+   DATASOURCE_URL=jdbc:postgresql://mg-identity-service-postgres:5432/НАЗВАНИЕ-СОЗДАННОГО-СЕРВЕРА
+   DATASOURCE_DB=mg-identity-service
+   DATASOURCE_USERNAME=ПОЛЬЗОВАТЕЛЬ-СЕРВЕРА
+   DATASOURCE_PASSWORD=ПАРОЛЬ-ОТ-СЕРВЕРА
+   ```
+7. Ввести следующие команды в строгом порядке:
+    ```
+    docker build -t mg-identity-service .
+    docker-compose up
+    ```
 
 > [!TIP]
 > Все основные тесты проходят на ветке **dev** 
