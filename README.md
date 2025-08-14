@@ -7,15 +7,16 @@
 2. Открыть командную строку от имени администратора
 3. Сменить расположение на ранее созданную папку с исходниками проекта
 4. Открыть pgAdmin и создать новый сервер
-6. Зайти в .env-example и изменить следующие строки:
+5. Зайти в .env-example и изменить следующие строки:
    ```
    DATASOURCE_URL=jdbc:postgresql://mg-identity-service-postgres:5432/НАЗВАНИЕ-СОЗДАННОГО-СЕРВЕРА
    DATASOURCE_DB=mg-identity-service
    DATASOURCE_USERNAME=ПОЛЬЗОВАТЕЛЬ-СЕРВЕРА
    DATASOURCE_PASSWORD=ПАРОЛЬ-ОТ-СЕРВЕРА
    ```
-7. Ввести следующие команды в строгом порядке:
+6. Ввести следующие команды в строгом порядке:
     ```
+    gradlew build
     docker build -t mg-identity-service .
     docker-compose up
     ```
