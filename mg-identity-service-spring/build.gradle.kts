@@ -50,3 +50,7 @@ dependencies {
         implementation(project(":$it"))
     }
 }
+
+tasks.withType<Test> {
+    failOnNoDiscoveredTests = false
+}

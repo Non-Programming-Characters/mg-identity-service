@@ -79,3 +79,6 @@ tasks.withType<Jar> {
     }
 }
 
+tasks.withType<Test> {
+    failOnNoDiscoveredTests = false
+}
