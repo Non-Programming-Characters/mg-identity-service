@@ -1,61 +1,52 @@
-version: "3.0"
+version: '3'
 
 services:
-
   mg-identity-service:
-    image: "mg-identity-service:latest"
-    hostname: "mg-identity-service"
-    env_file: .env-example
+    image: mg-identity-service:latest
+    hostname: mg-identity-service
+    env_file: .env
+    build:
+      dockerfile: Dockerfile
     environment:
       - spring.jpa.hibernate.ddl-auto=update
+    ports:
+      - '8080:8080'
+    networks:
+      - mgi-backend-wrapper-network
     depends_on:
-      - mg-identity-service-postgres
-      - mg-identity-service-kafka
-    ports:
-      - "8080:8080"
+      - postgres
+      - swagger-ui
 
-  mg-identity-service-kafka:
-    image: confluentinc/cp-kafka:7.3.2
-    hostname: kafka
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_HOST_NAME: kafka:9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_PRODUCER_KEY_SERIALIZER: org.apache.kafka.common.serialization.StringSerializer
-      KAFKA_PRODUCER_VALUE_SERIALIZER: org.springframework.kafka.support.serializer.JsonSerializer
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    ports:
-      - "9092:9092"
-    depends_on:
-      - mg-identity-service-zookeeper
-
-  mg-identity-service-zookeeper:
-    image: confluentinc/cp-zookeeper:7.3.2
-    hostname: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_SERVERS: zookeeper:2888:3888
-    ports:
-      - "2181:2181"
-
-  mg-identity-service-postgres:
+  postgres:
     image: postgres:14.1-alpine
-    hostname: postgres-identity-service
+    hostname: postgres-mg-identity-service
     restart: always
     environment:
       POSTGRES_URL: ${DATASOURCE_URL}
       POSTGRES_DB: ${DATASOURCE_DB}
       POSTGRES_USER: ${DATASOURCE_USERNAME}
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
     ports:
       - '5432:5432'
+    networks:
+      - mgi-backend-wrapper-network
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8079:8079"
+    environment:
+      SWAGGER_JSON: /data/swagger.yml
+    networks:
+      - mgi-backend-wrapper-network
+    volumes:
+      - ./data:/data
+
+networks:
+  mgi-backend-wrapper-network:
+    driver: bridge
 
 volumes:
   postgres_data:
