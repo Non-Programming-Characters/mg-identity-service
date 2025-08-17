@@ -14,14 +14,11 @@ dependencies {
 
     implementation(libs.nimbus.jose.jwt)
 
-    runtimeOnly(libs.postgresql.postgresql)
+    runtimeOnly(rootProject.libs.postgresql.postgresql)
 
     implementation(rootProject.libs.springframework.spring.boot.starter.actuator)
 
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.junit.vintage")
-    }
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
@@ -52,11 +49,4 @@ dependencies {
     ).forEach {
         implementation(project(":$it"))
     }
-}
-
-tasks.withType<Test> {
-    testLogging {
-        events("passed", "skipped", "failed", "standardOut", "standardError")
-    }
-    useJUnitPlatform()
 }

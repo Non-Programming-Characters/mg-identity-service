@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.4.2"
+    id("org.springframework.boot") version "3.5.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
@@ -14,7 +14,7 @@ java {
 buildscript {
     repositories { gradlePluginPortal() }
     dependencies {
-        classpath("org.springframework.boot:org.springframework.boot.gradle.plugin:3.4.2")
+        classpath("org.springframework.boot:org.springframework.boot.gradle.plugin:3.5.2")
     }
 }
 
@@ -40,7 +40,6 @@ dependencyManagement {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
     }
 }
-
 
 subprojects {
     apply(plugin = "java-library")
@@ -80,9 +79,3 @@ tasks.withType<Jar> {
     }
 }
 
-tasks.withType<Test> {
-    testLogging {
-        events("passed", "skipped", "failed", "standardOut", "standardError")
-    }
-    useJUnitPlatform()
-}
