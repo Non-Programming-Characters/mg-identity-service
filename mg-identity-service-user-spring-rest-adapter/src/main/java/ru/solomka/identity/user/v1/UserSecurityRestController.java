@@ -48,8 +48,10 @@ public class UserSecurityRestController {
                 registrationRequest.getPassword(),
                 registrationRequest.getEmail(),
                 registrationRequest.getFirstName(),
-                registrationRequest.getLastName())
+                registrationRequest.getLastName(),
+                registrationRequest.getBirthDate())
         );
+
         return ResponseEntity.ok(RegistrationResponse.builder()
                 .login(userEntity.getLogin())
                 .email(userEntity.getEmail())

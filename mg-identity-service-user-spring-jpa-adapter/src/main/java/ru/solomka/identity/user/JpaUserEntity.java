@@ -39,6 +39,9 @@ public class JpaUserEntity {
     @Column(name = "last_name", nullable = false)
     @NonNull String lastName;
 
+    @Column(name = "birth_date", nullable = false)
+    @NonNull Instant birthDate;
+
     @Column(name = "created_at", nullable = false)
     Instant createdAt;
 }

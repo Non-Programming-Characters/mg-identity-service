@@ -13,6 +13,7 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .email(domainEntity.getEmail())
                 .firstName(domainEntity.getFirstName())
                 .lastName(domainEntity.getLastName())
+                .birthDate(domainEntity.getBirthDate())
                 .createdAt(domainEntity.getCreatedAt())
                 .build();
     }
@@ -26,6 +27,7 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .email(infrastructureEntity.getEmail())
                 .firstName(infrastructureEntity.getFirstName())
                 .lastName(infrastructureEntity.getLastName())
+                .birthDate(infrastructureEntity.getBirthDate())
                 .createdAt(infrastructureEntity.getCreatedAt())
                 .build();
     }

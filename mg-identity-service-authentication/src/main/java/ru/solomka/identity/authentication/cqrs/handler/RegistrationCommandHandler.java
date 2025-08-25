@@ -42,6 +42,7 @@ public class RegistrationCommandHandler implements CommandHandler<RegistrationCo
                 .email(command.getEmail())
                 .firstName(command.getFirstName())
                 .lastName(command.getLastName())
+                .birthDate(command.getBirthDate())
                 .build());
     }
 }
