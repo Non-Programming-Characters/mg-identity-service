@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.solomka.identity.user.*;
+import ru.solomka.identity.user.cqrs.command.ValidateUserCredentialCommandHandler;
 import ru.solomka.identity.user.cqrs.query.GetUserByIdQueryHandler;
 
 @Configuration
@@ -35,7 +36,11 @@ public class UserConfiguration {
     }
 
     @Bean
-    GetUserByIdQueryHandler getUserByIdQueryHandler(UserService userService) {
+    GetUserByIdQueryHandler getUserByIdQueryHandler(@NonNull UserService userService) {
         return new GetUserByIdQueryHandler(userService);
+    }
+    @Bean
+    ValidateUserCredentialCommandHandler validateUserCredentialCommandHandler(@NonNull UserService userService) {
+        return new ValidateUserCredentialCommandHandler(userService);
     }
 }
