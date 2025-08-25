@@ -34,7 +34,12 @@ public class HttpSecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(registry -> registry
-                        .requestMatchers("/v1/security/auth/**", "/identity-mg/v3/api-docs/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(
+                                "/v1/security/auth/**",
+                                "/v1/credentials/validator",
+                                "/identity-mg/v3/api-docs/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
