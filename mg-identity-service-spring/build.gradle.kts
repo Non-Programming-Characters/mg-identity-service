@@ -52,5 +52,10 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    failOnNoDiscoveredTests = false
+
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }

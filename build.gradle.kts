@@ -78,7 +78,3 @@ tasks.withType<Jar> {
         attributes["Main-Class"] = "ru.solomka.identity.spring.MgIdentityService"
     }
 }
-
-tasks.withType<Test> {
-    failOnNoDiscoveredTests = false
-}
