@@ -66,6 +66,7 @@ public class AuthenticationTest {
                 .lastName("testlastname")
                 .email("testemail")
                 .createdAt(Instant.now())
+                .birthDate(Instant.now())
                 .build();
 
         Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
@@ -83,6 +84,7 @@ public class AuthenticationTest {
                 .lastName("testlastname")
                 .email("testemail")
                 .createdAt(Instant.now())
+                .birthDate(Instant.now())
                 .build();
 
         PrincipalEntity principalEntity = PrincipalEntity.builder()
