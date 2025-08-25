@@ -15,6 +15,7 @@ import ru.solomka.identity.token.exception.TokenException;
 import ru.solomka.identity.token.exception.TokenExpiredException;
 import ru.solomka.identity.token.exception.TokenParseException;
 import ru.solomka.identity.token.exception.TokenVerificationException;
+import ru.solomka.identity.user.exception.CredentialValidationException;
 
 import java.util.List;
 
@@ -68,6 +69,16 @@ public class ExceptionAdviceConfiguration {
                 TokenException.class
         );
     }
+
+    @Bean
+    @Order(0)
+    ExceptionFormatProvider credentialValidationExceptionFormatProvider() {
+        return new StatusCodeRangeExceptionFormatProvider(
+                403,
+                CredentialValidationException.class
+        );
+    }
+
     @Bean
     @Order(0)
     ExceptionFormatProvider tokenExpiredExceptionFormatProvider() {
