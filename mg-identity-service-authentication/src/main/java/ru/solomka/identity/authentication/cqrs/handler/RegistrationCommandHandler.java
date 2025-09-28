@@ -8,25 +8,26 @@ import ru.solomka.identity.authentication.EncoderDelegate;
 import ru.solomka.identity.authentication.cqrs.RegistrationCommand;
 import ru.solomka.identity.authentication.exception.CredentialsCollisionException;
 import ru.solomka.identity.common.cqrs.CommandHandler;
+import ru.solomka.identity.principal.PrincipalEntity;
 import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserService;
+
+import java.util.UUID;
 
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RegistrationCommandHandler implements CommandHandler<RegistrationCommand, UserEntity> {
 
-    @NonNull PrincipalService principalService;
     @NonNull UserService userService;
-
     @NonNull EncoderDelegate encoderDelegate;
+    @NonNull PrincipalService principalService;
 
     @Override
     public UserEntity handle(RegistrationCommand command) {
 
-        if(command.getLogin().isEmpty() || command.getPassword().isEmpty() || command.getEmail().isEmpty()
-                || command.getFirstName().isEmpty() || command.getLastName().isEmpty()) {
+        if(command.getLogin().isEmpty() || command.getPassword().isEmpty() || command.getEmail().isEmpty()) {
             throw new IllegalArgumentException("Invalid arguments");
         }
 
@@ -36,13 +37,15 @@ public class RegistrationCommandHandler implements CommandHandler<RegistrationCo
         if(userService.findByEmail(command.getEmail()).isPresent())
             throw new CredentialsCollisionException("User with email '%s' already exists".formatted(command.getEmail()));
 
-        return userService.create(UserEntity.builder()
+        UserEntity userEntity = UserEntity.builder()
+                .id(UUID.randomUUID())
                 .login(command.getLogin())
-                .passwordHash(encoderDelegate.encode(command.getPassword()))
                 .email(command.getEmail())
-                .firstName(command.getFirstName())
-                .lastName(command.getLastName())
-                .birthDate(command.getBirthDate())
-                .build());
+                .passwordHash(encoderDelegate.encode(command.getPassword()))
+                .build();
+
+        principalService.setPrincipal(PrincipalEntity.builder().id(userEntity.getId()).username(userEntity.getLogin()).build());
+
+        return userService.create(userEntity);
     }
 }
