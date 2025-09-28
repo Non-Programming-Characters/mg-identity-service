@@ -12,9 +12,10 @@ import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.solomka.identity.authentication.AuthenticationService;
-import ru.solomka.identity.authentication.EncoderDelegate;
 import ru.solomka.identity.authentication.EncoderDelegateAdapter;
 import ru.solomka.identity.authentication.exception.CredentialsException;
+import ru.solomka.identity.common.EntityNotification;
+import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.principal.PrincipalEntity;
 import ru.solomka.identity.principal.PrincipalRepository;
@@ -23,9 +24,7 @@ import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserRepository;
 import ru.solomka.identity.user.UserService;
 
-import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -43,9 +42,24 @@ public class AuthenticationTest {
 
     @BeforeEach
     void setUp() {
+
+        PrincipalService principalService = new PrincipalService(principalRepository);
+        UserService userService = new UserService(userRepository, new EntityNotificationService<>(new EntityNotification<>() {
+            @Override
+            public void notifyCreate(UserEntity message, PrincipalEntity entity) {
+            }
+
+            @Override
+            public void notifyUpdate(UserEntity message, PrincipalEntity entity) {
+            }
+
+            @Override
+            public void notifyDelete(UserEntity message, PrincipalEntity entity) {
+            }
+        }, principalService));
+
         authenticationService = new AuthenticationService(
-                new PrincipalService(principalRepository),
-                new UserService(userRepository),
+                principalService, userService,
                 new EncoderDelegateAdapter(passwordEncoder)
         );
     }
@@ -59,14 +73,9 @@ public class AuthenticationTest {
     @Test
     void shouldThrowWhenInvalidCredentials() {
         UserEntity user = UserEntity.builder()
-                .id(UUID.randomUUID())
                 .login("testuserlogin")
                 .passwordHash(passwordEncoder.encode("TestPassword"))
-                .firstName("testfirstname")
-                .lastName("testlastname")
                 .email("testemail")
-                .createdAt(Instant.now())
-                .birthDate(Instant.now())
                 .build();
 
         Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
@@ -77,14 +86,9 @@ public class AuthenticationTest {
     @Test
     void shouldReturnPrincipalWhenCorrectParams() {
         UserEntity user = UserEntity.builder()
-                .id(UUID.randomUUID())
                 .login("testuserlogin")
                 .passwordHash(passwordEncoder.encode("TestPassword"))
-                .firstName("testfirstname")
-                .lastName("testlastname")
                 .email("testemail")
-                .createdAt(Instant.now())
-                .birthDate(Instant.now())
                 .build();
 
         PrincipalEntity principalEntity = PrincipalEntity.builder()
