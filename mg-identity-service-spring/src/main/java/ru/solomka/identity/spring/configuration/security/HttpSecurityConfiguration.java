@@ -25,7 +25,7 @@ import java.util.List;
 public class HttpSecurityConfiguration {
 
     @Bean
-    SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http, CorsConfigurationSource corsConfigurationSource, OnceRequestFilter requestFilter) throws Exception {
+    SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http, OnceRequestFilter requestFilter) throws Exception {
         return http
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -35,8 +35,8 @@ public class HttpSecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(
-                                "/v1/security/auth/**",
-                                "/v1/credentials/validator",
+                                "/v1/api/security/auth/**",
+                                "/v1/api/credentials/validator",
                                 "/identity-mg/v3/api-docs/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
