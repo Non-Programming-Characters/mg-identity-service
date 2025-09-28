@@ -20,7 +20,7 @@ import ru.solomka.identity.user.response.security.AuthenticationResponse;
 import ru.solomka.identity.user.response.security.RegistrationResponse;
 
 @RestController
-@RequestMapping("/v1/security/auth")
+@RequestMapping("/v1/api/security/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserSecurityRestController {
@@ -46,17 +46,12 @@ public class UserSecurityRestController {
         UserEntity userEntity = registrationCommandHandler.handle(new RegistrationCommand(
                 registrationRequest.getLogin(),
                 registrationRequest.getPassword(),
-                registrationRequest.getEmail(),
-                registrationRequest.getFirstName(),
-                registrationRequest.getLastName(),
-                registrationRequest.getBirthDate())
-        );
+                registrationRequest.getEmail()
+        ));
 
         return ResponseEntity.ok(RegistrationResponse.builder()
                 .login(userEntity.getLogin())
                 .email(userEntity.getEmail())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
                 .build()
         );
     }
