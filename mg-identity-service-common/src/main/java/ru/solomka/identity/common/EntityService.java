@@ -17,8 +17,8 @@ public abstract class EntityService<E extends Entity> {
     @NonNull EntityRepository<E> repository;
 
     public E create(E entity) {
-        entity.setId(UUID.randomUUID());
-        entity.setCreatedAt(Instant.now());
+        if(entity.getId() == null) entity.setId(UUID.randomUUID());
+        if(entity.getCreatedAt() == null) entity.setCreatedAt(Instant.now());
         return repository.create(entity);
     }
 
