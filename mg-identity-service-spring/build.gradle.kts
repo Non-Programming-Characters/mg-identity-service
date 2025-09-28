@@ -45,7 +45,9 @@ dependencies {
         "mg-identity-service-nimbus-token-adapter",
 
         "mg-identity-service-authentication",
-        "mg-identity-service-authentication-spring-security-adapter"
+        "mg-identity-service-authentication-spring-security-adapter",
+
+        "mg-identity-service-kafka-adapter"
     ).forEach {
         implementation(project(":$it"))
     }
