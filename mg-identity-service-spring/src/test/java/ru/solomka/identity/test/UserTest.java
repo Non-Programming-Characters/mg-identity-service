@@ -12,12 +12,16 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.solomka.identity.common.EntityNotification;
+import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
+import ru.solomka.identity.principal.PrincipalEntity;
+import ru.solomka.identity.principal.PrincipalRepository;
+import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserRepository;
 import ru.solomka.identity.user.UserService;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,13 +32,29 @@ public class UserTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private PrincipalRepository principalRepository;
+
     private UserService userService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository);
+        PrincipalService principalService = new PrincipalService(principalRepository);
+        userService = new UserService(userRepository, new EntityNotificationService<>(new EntityNotification<>() {
+            @Override
+            public void notifyCreate(UserEntity message, PrincipalEntity entity) {
+            }
+
+            @Override
+            public void notifyUpdate(UserEntity message, PrincipalEntity entity) {
+            }
+
+            @Override
+            public void notifyDelete(UserEntity message, PrincipalEntity entity) {
+            }
+        }, principalService));
     }
 
     @Test
@@ -48,16 +68,10 @@ public class UserTest {
                 .id(UUID.randomUUID())
                 .login("testuserlogin")
                 .passwordHash(passwordEncoder.encode("TestPassword"))
-                .firstName("testfirstname")
-                .lastName("testlastname")
                 .email("testemail")
-                .createdAt(Instant.now())
-                .birthDate(Instant.now())
                 .build();
 
         Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
         Mockito.when(userRepository.findByEmail("testemail")).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findByFirstName("testfirstname")).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findByLastName("testlastname")).thenReturn(Optional.of(user));
     }
 }
