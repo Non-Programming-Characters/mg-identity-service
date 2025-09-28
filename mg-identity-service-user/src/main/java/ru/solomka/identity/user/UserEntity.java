@@ -24,10 +24,5 @@ public class UserEntity implements Entity {
 
     @NonNull String email;
 
-    @NonNull String firstName;
-    @NonNull String lastName;
-
-    @NonNull Instant birthDate;
-
     Instant createdAt;
 }
