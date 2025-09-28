@@ -31,7 +31,7 @@ spring:
 
   datasource:
     driverClassName: org.postgresql.Driver
-    username: ${DATASOURCE_USER}
+    username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     url: ${DATASOURCE_URL}
 
@@ -40,7 +40,7 @@ spring:
     generate-ddl: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
