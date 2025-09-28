@@ -19,7 +19,7 @@ import ru.solomka.identity.user.response.UserSearchResponse;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/security/user")
+@RequestMapping("/v1/api/security/user")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserContainerRestController {
@@ -28,7 +28,7 @@ public class UserContainerRestController {
     @NonNull UserSearchResponseUserEntityMapper userSearchResponseUserEntityMapper;
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<UserSearchResponse> getUserById(@RequestParam UUID id) {
+    public ResponseEntity<UserSearchResponse> getUserById(@RequestParam("id") UUID id) {
         UserEntity userEntity = getUserByIdQueryHandler.handle(new GetUserByIdQuery(id));
         return ResponseEntity.ok(userSearchResponseUserEntityMapper.mapToInfrastructure(userEntity));
     }

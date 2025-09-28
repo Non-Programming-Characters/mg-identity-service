@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.solomka.identity.common.cqrs.CommandHandler;
@@ -19,7 +18,7 @@ import ru.solomka.identity.user.request.ValidateCredentialsRequest;
 import ru.solomka.identity.user.response.validation.UserValidateCredentialsResponse;
 
 @RestController
-@RequestMapping("/v1/credentials/validator")
+@RequestMapping("/v1/api/credentials/validator")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserCredentialsValidatorRestController {
