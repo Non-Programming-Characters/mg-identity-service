@@ -11,8 +11,6 @@ public class UserSearchResponseUserEntityMapper implements Mapper<UserSearchResp
                 .id(domainEntity.getId())
                 .login(domainEntity.getLogin())
                 .email(domainEntity.getEmail())
-                .firstName(domainEntity.getFirstName())
-                .lastName(domainEntity.getLastName())
                 .createdAt(domainEntity.getCreatedAt())
                 .build();
     }
