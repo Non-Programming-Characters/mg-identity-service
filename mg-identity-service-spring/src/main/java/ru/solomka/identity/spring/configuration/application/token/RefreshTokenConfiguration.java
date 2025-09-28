@@ -1,5 +1,6 @@
 package ru.solomka.identity.spring.configuration.application.token;
 
+import lombok.NonNull;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +18,12 @@ import ru.solomka.identity.user.UserService;
 public class RefreshTokenConfiguration {
 
     @Bean
-    IssueTokenPairCommandHandler issueTokenPairCommandHandler(RefreshTokenService refreshTokenService,
-                                                              TokenExtractor tokenExtractor,
-                                                              UserService userService,
-                                                              PrincipalService principalService,
-                                                              TokenPairFactory tokenPairFactory,
-                                                              TokenPropertiesConfiguration tokenPropertiesConfiguration) {
+    IssueTokenPairCommandHandler issueTokenPairCommandHandler(@NonNull RefreshTokenService refreshTokenService,
+                                                              @NonNull TokenExtractor tokenExtractor,
+                                                              @NonNull UserService userService,
+                                                              @NonNull PrincipalService principalService,
+                                                              @NonNull TokenPairFactory tokenPairFactory,
+                                                              @NonNull TokenPropertiesConfiguration tokenPropertiesConfiguration) {
         return new IssueTokenPairCommandHandler(
                 refreshTokenService,
                 tokenExtractor,
@@ -35,13 +36,13 @@ public class RefreshTokenConfiguration {
     }
 
     @Bean
-    RefreshTokenService refreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+    RefreshTokenService refreshTokenService(@NonNull RefreshTokenRepository refreshTokenRepository) {
         return new RefreshTokenService(refreshTokenRepository);
     }
 
     @Bean
-    RefreshTokenRepository refreshTokenRepository(JpaRefreshTokenEntityRepository jpaRefreshTokenEntityRepository,
-                                                  Mapper<JpaRefreshTokenEntity, RefreshTokenEntity> jpaRefreshTokenEntityRefreshTokenEntityMapper) {
+    RefreshTokenRepository refreshTokenRepository(@NonNull JpaRefreshTokenEntityRepository jpaRefreshTokenEntityRepository,
+                                                  @NonNull Mapper<JpaRefreshTokenEntity, RefreshTokenEntity> jpaRefreshTokenEntityRefreshTokenEntityMapper) {
         return new JpaRefreshTokenRepositoryAdapter(jpaRefreshTokenEntityRepository, jpaRefreshTokenEntityRefreshTokenEntityMapper);
     }
 
