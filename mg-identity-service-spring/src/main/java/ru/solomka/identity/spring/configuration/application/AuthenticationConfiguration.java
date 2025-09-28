@@ -50,9 +50,9 @@ public class AuthenticationConfiguration {
                                                             @NonNull UserService userService
     ) {
         return new RegistrationCommandHandler(
-              principalService,
                 userService,
-                encoderDelegate
+                encoderDelegate,
+                principalService
         );
     }
 }
