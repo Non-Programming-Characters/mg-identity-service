@@ -26,17 +26,7 @@ public class JpaUserEntityRepositoryAdapter extends BaseJpaRepositoryAdapter<Jpa
     }
 
     @Override
-    public Optional<UserEntity> findByFirstName(String firstName) {
-        return jpaUserRepository.findByFirstName(firstName).map(userEntityJpaUserEntityMapper::mapToDomain);
-    }
-
-    @Override
-    public Optional<UserEntity> findByLastName(String lastName) {
-        return jpaUserRepository.findByFirstName(lastName).map(userEntityJpaUserEntityMapper::mapToDomain);
-    }
-
-    @Override
     public Optional<UserEntity> findByEmail(String email) {
-        return jpaUserRepository.findByFirstName(email).map(userEntityJpaUserEntityMapper::mapToDomain);
+        return jpaUserRepository.findByEmail(email).map(userEntityJpaUserEntityMapper::mapToDomain);
     }
 }
