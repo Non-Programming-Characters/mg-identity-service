@@ -5,10 +5,8 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.EntityService;
-import ru.solomka.identity.common.exception.EntityNotFoundException;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -47,20 +45,10 @@ public class UserService extends EntityService<UserEntity> {
     }
 
     public UserEntity getByLogin(@NonNull String login){
-        return this.findByLogin(login)
-                .orElseThrow(() -> new EntityNotFoundException("User with login '%s' not found".formatted(login)));
-    }
-
-    public UserEntity getByEmail(@NonNull String email){
-        return this.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email '%s' not found".formatted(email)));
-    }
-
-    public Optional<UserEntity> findByLogin(@NonNull String login) {
         return userRepository.findByLogin(login);
     }
 
-    public Optional<UserEntity> findByEmail(@NonNull String email) {
+    public UserEntity getByEmail(@NonNull String email){
         return userRepository.findByEmail(email);
     }
 }
