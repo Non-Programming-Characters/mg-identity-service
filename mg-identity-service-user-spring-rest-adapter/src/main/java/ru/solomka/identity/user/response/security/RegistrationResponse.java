@@ -9,11 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class RegistrationResponse {
-
     @NonNull String login;
-
     @NonNull String email;
-
-    @NonNull String firstName;
-    @NonNull String lastName;
 }
