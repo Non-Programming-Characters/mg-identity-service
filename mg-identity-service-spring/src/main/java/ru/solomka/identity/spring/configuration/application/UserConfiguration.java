@@ -5,18 +5,18 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import ru.solomka.identity.common.Entity;
 import ru.solomka.identity.common.EntityNotification;
 import ru.solomka.identity.common.EntityNotificationService;
-import ru.solomka.identity.kafka.KafkaNotificationAdapter;
 import ru.solomka.identity.principal.PrincipalEntity;
 import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.user.*;
 import ru.solomka.identity.user.cqrs.command.ValidateUserCredentialCommandHandler;
-import ru.solomka.identity.user.cqrs.query.GetUserByIdQueryHandler;
+import ru.solomka.identity.user.cqrs.query.handler.GetUserByEmailQueryHandler;
+import ru.solomka.identity.user.cqrs.query.handler.GetUserByIdQueryHandler;
+import ru.solomka.identity.user.cqrs.query.handler.GetUserByLoginQueryHandler;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = JpaUserRepository.class)
+@EnableJpaRepositories(basePackageClasses = CrudUserRepository.class)
 @EntityScan(basePackageClasses = JpaUserEntity.class)
 public class UserConfiguration {
 
@@ -27,9 +27,9 @@ public class UserConfiguration {
     }
 
     @Bean
-    JpaUserEntityRepositoryAdapter userRepository(@NonNull JpaUserRepository jpaUserRepository,
+    JpaUserEntityRepositoryAdapter userRepository(@NonNull CrudUserRepository crudUserRepository,
                                                   @NonNull UserEntityJpaUserEntityMapper userEntityJpaUserEntityMapper) {
-        return new JpaUserEntityRepositoryAdapter(jpaUserRepository, userEntityJpaUserEntityMapper);
+        return new JpaUserEntityRepositoryAdapter(crudUserRepository, userEntityJpaUserEntityMapper);
     }
 
     @Bean
@@ -44,14 +44,20 @@ public class UserConfiguration {
     }
 
     @Bean
-    UserSearchResponseUserEntityMapper userEntityResponseUserEntityMapper() {
-        return new UserSearchResponseUserEntityMapper();
-    }
-
-    @Bean
     GetUserByIdQueryHandler getUserByIdQueryHandler(@NonNull UserService userService) {
         return new GetUserByIdQueryHandler(userService);
     }
+
+    @Bean
+    GetUserByLoginQueryHandler getUserByLoginQueryHandler(@NonNull UserService userService) {
+        return new GetUserByLoginQueryHandler(userService);
+    }
+
+    @Bean
+    GetUserByEmailQueryHandler getUserByEmailQueryHandler(@NonNull UserService userService) {
+        return new GetUserByEmailQueryHandler(userService);
+    }
+
     @Bean
     ValidateUserCredentialCommandHandler validateUserCredentialCommandHandler(@NonNull UserService userService) {
         return new ValidateUserCredentialCommandHandler(userService);
