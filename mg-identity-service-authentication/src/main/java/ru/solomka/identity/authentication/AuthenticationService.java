@@ -20,12 +20,15 @@ public class AuthenticationService {
     @NonNull EncoderDelegate encoderDelegate;
 
     public @NonNull PrincipalEntity authenticate(String login, String password) {
-        UserEntity userEntity = userService.findByLogin(login)
-                .orElseThrow(() -> new EntityNotFoundException("User with login '%s' not found".formatted(login)));
+        try {
+            UserEntity userEntity = userService.getByLogin(login);
 
-        if (!encoderDelegate.matches(userEntity.getPasswordHash(), password))
-            throw new CredentialsException("Wrong password!");
+            if (!encoderDelegate.matches(userEntity.getPasswordHash(), password))
+                throw new CredentialsException("Wrong password!");
 
-        return principalService.setPrincipal(PrincipalEntity.builder().id(userEntity.getId()).username(userEntity.getLogin()).build());
+            return principalService.setPrincipal(PrincipalEntity.builder().id(userEntity.getId()).username(userEntity.getLogin()).build());
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }
