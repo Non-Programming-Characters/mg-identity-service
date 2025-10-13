@@ -1,17 +1,16 @@
 package ru.solomka.identity.kafka.event;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.solomka.identity.kafka.entity.KafkaUserEntity;
 import ru.solomka.identity.principal.PrincipalEntity;
-import ru.solomka.identity.user.UserEntity;
 
-@Getter
-@RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class KafkaUserCreatedEvent extends KafkaEvent<UserEntity, PrincipalEntity> {
-    @NonNull UserEntity firstChapterNotifyMessage;
+@AllArgsConstructor
+@NoArgsConstructor(force = true)
+@Builder
+@Setter @Getter
+public class KafkaUserCreatedEvent extends KafkaEvent<KafkaUserEntity, PrincipalEntity> {
+    @NonNull KafkaUserEntity firstChapterNotifyMessage;
     @NonNull PrincipalEntity secondChapterNotifyMessage;
 }
