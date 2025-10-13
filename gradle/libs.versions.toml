@@ -35,6 +35,9 @@ nimbus-jose-jwt = { module = 'com.nimbusds:nimbus-jose-jwt', version.ref = 'nimb
 postgresql-postgresql = { module = 'org.postgresql:postgresql' }
 flywaydb-flyway-core = { module = 'org.flywaydb:flyway-core' }
 
+jackson-core-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version = '2.13.3'}
+jackson-core-core = { module = 'com.fasterxml.jackson.core:jackson-core', version = '2.13.3'}
+
 # Utility
 projectlombok-lombok = { module = 'org.projectlombok:lombok', version.ref = 'projectlombok-lombok' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
