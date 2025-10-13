@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.cqrs.CommandHandler;
+import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserService;
 import ru.solomka.identity.user.exception.CredentialValidationException;
@@ -13,7 +14,6 @@ import ru.solomka.identity.user.exception.ValidationException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
@@ -43,15 +43,15 @@ public class ValidateUserCredentialCommandHandler implements CommandHandler<Vali
             case "login" -> {
                 Pattern userLoginPattern = Pattern.compile("^[a-zA-Z][a-zA-Z0-9-\\\\.]{1,20}$");
 
-                Optional<UserEntity> optionalUserEntity = userService.findByLogin(command.getData());
+                try {
+                    UserEntity optionalUserEntity = userService.getByLogin(command.getData());
+                    if(!userLoginPattern.matcher(optionalUserEntity.getLogin()).matches())
+                        throw new CredentialValidationException("The login validation attempt failed (Incorrect login content format)");
 
-                if(optionalUserEntity.isPresent())
+                    return command.getData();
+                } catch (EntityNotFoundException e) {
                     throw new CredentialValidationException("The login validation attempt failed (Login already exists)");
-
-                if(!userLoginPattern.matcher(command.getData()).matches())
-                    throw new CredentialValidationException("The login validation attempt failed (Incorrect login content format)");
-
-                return command.getData();
+                }
             }
 
             case "email" -> {
