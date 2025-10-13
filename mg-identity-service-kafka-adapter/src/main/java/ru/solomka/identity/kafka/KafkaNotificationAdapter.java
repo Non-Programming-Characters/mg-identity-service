@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.solomka.identity.common.EntityNotification;
+import ru.solomka.identity.kafka.entity.KafkaUserEntity;
 import ru.solomka.identity.kafka.event.KafkaUserCreatedEvent;
 import ru.solomka.identity.kafka.event.KafkaUserDeletedEvent;
 import ru.solomka.identity.kafka.event.KafkaUserUpdatedEvent;
@@ -22,16 +23,16 @@ public class KafkaNotificationAdapter implements EntityNotification<UserEntity, 
 
     @Override
     public void notifyCreate(UserEntity user, PrincipalEntity principal) {
-        createNotification.send(KafkaTopicPoints.CREATE_EVENT_TOPIC, new KafkaUserCreatedEvent(user, principal));
+        createNotification.send(KafkaTopicPoints.CREATE_EVENT_TOPIC, new KafkaUserCreatedEvent(new KafkaUserEntity(user.getId(), user.getEmail(), user.getCreatedAt()), principal));
     }
 
     @Override
     public void notifyUpdate(UserEntity user, PrincipalEntity principal) {
-        updateNotification.send(KafkaTopicPoints.UPDATE_EVENT_TOPIC, new KafkaUserUpdatedEvent(user, principal));
+        updateNotification.send(KafkaTopicPoints.UPDATE_EVENT_TOPIC, new KafkaUserUpdatedEvent(new KafkaUserEntity(user.getId(), user.getEmail(), user.getCreatedAt()), principal));
     }
 
     @Override
     public void notifyDelete(UserEntity user, PrincipalEntity principal) {
-        deleteNotification.send(KafkaTopicPoints.DELETE_EVENT_TOPIC, new KafkaUserDeletedEvent(user, principal));
+        deleteNotification.send(KafkaTopicPoints.DELETE_EVENT_TOPIC, new KafkaUserDeletedEvent(new KafkaUserEntity(user.getId(), user.getEmail(), user.getCreatedAt()), principal));
     }
 }
