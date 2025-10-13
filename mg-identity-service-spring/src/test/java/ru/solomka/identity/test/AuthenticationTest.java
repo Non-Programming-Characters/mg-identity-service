@@ -24,7 +24,7 @@ import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserRepository;
 import ru.solomka.identity.user.UserService;
 
-import java.util.Optional;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -42,7 +42,6 @@ public class AuthenticationTest {
 
     @BeforeEach
     void setUp() {
-
         PrincipalService principalService = new PrincipalService(principalRepository);
         UserService userService = new UserService(userRepository, new EntityNotificationService<>(new EntityNotification<>() {
             @Override
@@ -78,7 +77,7 @@ public class AuthenticationTest {
                 .email("testemail")
                 .build();
 
-        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(user);
         Assertions.assertThrows(CredentialsException.class,
                 () -> authenticationService.authenticate(user.getLogin(), "invalidpassword"));
     }
@@ -86,6 +85,7 @@ public class AuthenticationTest {
     @Test
     void shouldReturnPrincipalWhenCorrectParams() {
         UserEntity user = UserEntity.builder()
+                .id(UUID.randomUUID())
                 .login("testuserlogin")
                 .passwordHash(passwordEncoder.encode("TestPassword"))
                 .email("testemail")
@@ -96,7 +96,7 @@ public class AuthenticationTest {
                 .username(user.getLogin())
                 .build();
 
-        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(user);
         Mockito.when(authenticationService.authenticate("testuserlogin", "TestPassword")).thenReturn(principalEntity);
     }
 }
