@@ -1,4 +1,4 @@
-package ru.solomka.identity.user.cqrs.query;
+package ru.solomka.identity.user.cqrs.query.handler;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -8,13 +8,13 @@ import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserService;
+import ru.solomka.identity.user.cqrs.query.GetUserByIdQuery;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GetUserByIdQueryHandler implements CommandHandler<GetUserByIdQuery, UserEntity> {
 
-    @NonNull
-    UserService userService;
+    @NonNull UserService userService;
 
     @Override
     public UserEntity handle(GetUserByIdQuery command) {
