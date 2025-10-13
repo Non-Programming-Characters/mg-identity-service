@@ -1,5 +1,6 @@
 package ru.solomka.identity.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.Entity;
@@ -20,6 +21,7 @@ public class UserEntity implements Entity {
 
     @NonNull String login;
 
+    @JsonIgnore
     @NonNull String passwordHash;
 
     @NonNull String email;
