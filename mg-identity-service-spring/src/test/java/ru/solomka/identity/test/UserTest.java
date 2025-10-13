@@ -71,7 +71,7 @@ public class UserTest {
                 .email("testemail")
                 .build();
 
-        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.findByEmail("testemail")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(user);
+        Mockito.when(userRepository.findByEmail("testemail")).thenReturn(user);
     }
 }
