@@ -7,6 +7,8 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,22 +31,16 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.STRICT_STUBS)
-public class NimbusTokenFactoryExtractorTest {
+class NimbusTokenFactoryExtractorTest {
 
-    @Mock
     private NimbusTokenFactoryAdapter tokenFactory;
-
-    @Mock
     private NimbusTokenExtractorAdapter tokenExtractor;
-
     private PrincipalEntity principal;
-
-    private final UUID uuid = UUID.randomUUID();
-    private final String username = "testuser";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -59,49 +55,64 @@ public class NimbusTokenFactoryExtractorTest {
         tokenFactory = new NimbusTokenFactoryAdapter(jwsSigner, jwsHeader);
         tokenExtractor = new NimbusTokenExtractorAdapter(jwsVerifier);
 
-        principal = new PrincipalEntity(uuid, username);
+        principal = new PrincipalEntity(UUID.randomUUID(), "testuser");
     }
 
-    @Test
-    void createAndValidateToken() throws TokenException {
-        TokenEntity token = tokenFactory.create(principal, Duration.ofHours(1), TokenType.ACCESS_TOKEN);
+    @Nested
+    @DisplayName("Создание и извлечение токена")
+    class CreateAndExtractToken {
 
-        assertNotNull(token);
-        assertEquals(principal.getId(), token.getUserId());
-        assertTrue(token.getExpiredAt().isAfter(java.time.Instant.now()));
+        @Test
+        @DisplayName("Успешно создаёт и извлекает валидный токен")
+        void shouldCreateAndExtractValidToken() {
+            Duration ttl = Duration.ofHours(1);
+            TokenType tokenType = TokenType.ACCESS_TOKEN;
 
-        TokenEntity extracted = tokenExtractor.extract("Bearer " + token.getToken());
+            TokenEntity token = tokenFactory.create(principal, ttl, tokenType);
+            TokenEntity extracted = tokenExtractor.extract("Bearer " + token.getToken());
 
-        assertEquals(token.getId(), extracted.getId());
-        assertEquals(token.getUserId(), extracted.getUserId());
-        assertEquals(token.getTokenType(), extracted.getTokenType());
+            assertThat(token).isNotNull();
+            assertThat(token.getUserId()).isEqualTo(principal.getId());
+            assertThat(token.getExpiredAt()).isAfter(java.time.Instant.now());
+            assertThat(token.getTokenType()).isEqualTo(tokenType);
+
+            assertThat(extracted.getId()).isEqualTo(token.getId());
+            assertThat(extracted.getUserId()).isEqualTo(token.getUserId());
+            assertThat(extracted.getTokenType()).isEqualTo(token.getTokenType());
+        }
     }
 
-    @Test
-    void shouldThrowWhenTokenExpired() {
-        TokenEntity token = tokenFactory.create(principal, Duration.ofMillis(-10), TokenType.ACCESS_TOKEN);
+    @Nested
+    @DisplayName("Обработка ошибок при извлечении токена")
+    class TokenExtractionErrors {
 
-        assertThrows(TokenExpiredException.class,
-                () -> tokenExtractor.extract("Bearer " + token.getToken()));
-    }
+        @Test
+        @DisplayName("Выбрасывает TokenExpiredException для просроченного токена")
+        void shouldThrowTokenExpiredExceptionWhenTokenIsExpired() {
+            TokenEntity expiredToken = tokenFactory.create(principal, Duration.ofMillis(-10), TokenType.ACCESS_TOKEN);
 
-    @Test
-    void shouldThrowWhenInvalidTokenFormat() {
-        assertThrows(TokenParseException.class,
-                () -> tokenExtractor.extract("InvalidTokenFormat"));
-    }
+            assertThatThrownBy(() -> tokenExtractor.extract("Bearer " + expiredToken.getToken()))
+                    .isInstanceOf(TokenExpiredException.class);
+        }
 
-    @Test
-    void shouldThrowWhenSignatureInvalid() throws Exception {
-        KeyPair otherKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        JWSVerifier otherVerifier = new RSASSAVerifier((RSAPublicKey) otherKeyPair.getPublic());
+        @Test
+        @DisplayName("Выбрасывает TokenParseException при неверном формате токена")
+        void shouldThrowTokenParseExceptionForInvalidFormat() {
+            assertThatThrownBy(() -> tokenExtractor.extract("InvalidTokenFormat"))
+                    .isInstanceOf(TokenParseException.class);
+        }
 
-        NimbusTokenExtractorAdapter extractorWithOtherVerifier =
-                new NimbusTokenExtractorAdapter(otherVerifier);
+        @Test
+        @DisplayName("Выбрасывает TokenVerificationException при недействительной подписи")
+        void shouldThrowTokenVerificationExceptionForInvalidSignature() throws Exception {
+            TokenEntity validToken = tokenFactory.create(principal, Duration.ofHours(1), TokenType.ACCESS_TOKEN);
 
-        TokenEntity token = tokenFactory.create(principal, Duration.ofHours(1), TokenType.ACCESS_TOKEN);
+            KeyPair otherKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+            JWSVerifier otherVerifier = new RSASSAVerifier((RSAPublicKey) otherKeyPair.getPublic());
+            NimbusTokenExtractorAdapter maliciousExtractor = new NimbusTokenExtractorAdapter(otherVerifier);
 
-        assertThrows(TokenVerificationException.class,
-                () -> extractorWithOtherVerifier.extract("Bearer " + token.getToken()));
+            assertThatThrownBy(() -> maliciousExtractor.extract("Bearer " + validToken.getToken()))
+                    .isInstanceOf(TokenVerificationException.class);
+        }
     }
 }

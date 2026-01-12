@@ -1,14 +1,9 @@
 package ru.solomka.identity.test.token;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.token.RefreshTokenEntity;
 import ru.solomka.identity.token.RefreshTokenRepository;
@@ -18,34 +13,51 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-public class RefreshTokenTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
-    @Mock
-    RefreshTokenRepository refreshTokenRepository;
+@ExtendWith(MockitoExtension.class)
+class RefreshTokenTest {
+
+    @Mock private RefreshTokenRepository refreshTokenRepository;
 
     private RefreshTokenService refreshTokenService;
-
-    private static final UUID TOKEN_UUID  = UUID.randomUUID();
 
     @BeforeEach
     void setUp() {
         refreshTokenService = new RefreshTokenService(refreshTokenRepository);
     }
 
-    @Test
-    void shouldReturnRefreshTokenWhenFindById() {
-        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder()
-                .id(TOKEN_UUID)
-                .createdAt(Instant.now())
-                .build();
+    @Nested
+    @DisplayName("Получение refresh-токена по ID")
+    class GetById {
 
-        Mockito.when(refreshTokenRepository.findById(TOKEN_UUID)).thenReturn(Optional.of(refreshTokenEntity));
-    }
+        @Test
+        @DisplayName("Возвращает токен, если он существует")
+        void shouldReturnRefreshTokenWhenFound() {
+            UUID tokenId = UUID.randomUUID();
+            RefreshTokenEntity expectedToken = RefreshTokenEntity.builder()
+                    .id(tokenId)
+                    .createdAt(Instant.now())
+                    .build();
 
-    @Test
-    void shouldThrowWhenFindWithInvalidId() {
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refreshTokenService.getById(UUID.randomUUID()));
+            given(refreshTokenRepository.findById(tokenId)).willReturn(Optional.of(expectedToken));
+
+            RefreshTokenEntity result = refreshTokenService.getById(tokenId);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getId()).isEqualTo(expectedToken.getId());
+        }
+
+        @Test
+        @DisplayName("Выбрасывает EntityNotFoundException, если токен не найден")
+        void shouldThrowEntityNotFoundExceptionWhenTokenNotFound() {
+            UUID nonExistentId = UUID.randomUUID();
+            given(refreshTokenRepository.findById(nonExistentId)).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> refreshTokenService.getById(nonExistentId))
+                    .isInstanceOf(EntityNotFoundException.class);
+        }
     }
 }

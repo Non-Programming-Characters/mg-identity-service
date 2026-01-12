@@ -1,14 +1,12 @@
 package ru.solomka.identity.test;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.solomka.identity.authentication.AuthenticationService;
@@ -23,20 +21,26 @@ import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserRepository;
 import ru.solomka.identity.user.UserService;
+import ru.solomka.identity.user.UserStatus;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-public class AuthenticationTest {
+class AuthenticationTest {
 
     @Mock
-    PrincipalRepository principalRepository;
+    private PrincipalRepository principalRepository;
 
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private AuthenticationService  authenticationService;
+    private AuthenticationService authenticationService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -45,58 +49,77 @@ public class AuthenticationTest {
         PrincipalService principalService = new PrincipalService(principalRepository);
         UserService userService = new UserService(userRepository, new EntityNotificationService<>(new EntityNotification<>() {
             @Override
-            public void notifyCreate(UserEntity message, PrincipalEntity entity) {
+            public void notifyCreate(UserEntity message) {
             }
 
             @Override
-            public void notifyUpdate(UserEntity message, PrincipalEntity entity) {
+            public void notifyUpdate(UserEntity message) {
             }
 
             @Override
-            public void notifyDelete(UserEntity message, PrincipalEntity entity) {
+            public void notifyDelete(UserEntity message) {
             }
-        }, principalService));
+        }));
 
         authenticationService = new AuthenticationService(
-                principalService, userService,
+                principalService,
+                userService,
                 new EncoderDelegateAdapter(passwordEncoder)
         );
     }
 
-    @Test
-    void shouldThrowWhenNotFoundUser() {
-        Assertions.assertThrows(EntityNotFoundException.class,
-                () -> authenticationService.authenticate("unknownuser", "unknownpassword"));
-    }
+    @Nested
+    @DisplayName("Аутентификация пользователя")
+    class AuthenticateUser {
 
-    @Test
-    void shouldThrowWhenInvalidCredentials() {
-        UserEntity user = UserEntity.builder()
-                .login("testuserlogin")
-                .passwordHash(passwordEncoder.encode("TestPassword"))
-                .email("testemail")
-                .build();
+        @Test
+        @DisplayName("Выбрасывает EntityNotFoundException, если пользователь не найден")
+        void shouldThrowEntityNotFoundExceptionWhenUserNotFound() {
+            String login = "unknownuser";
+            String password = "unknownpassword";
 
-        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(user);
-        Assertions.assertThrows(CredentialsException.class,
-                () -> authenticationService.authenticate(user.getLogin(), "invalidpassword"));
-    }
+            given(userRepository.findUserByLogin(login)).willReturn(Optional.empty());
 
-    @Test
-    void shouldReturnPrincipalWhenCorrectParams() {
-        UserEntity user = UserEntity.builder()
-                .id(UUID.randomUUID())
-                .login("testuserlogin")
-                .passwordHash(passwordEncoder.encode("TestPassword"))
-                .email("testemail")
-                .build();
+            assertThatThrownBy(() -> authenticationService.authenticate(login, password))
+                    .isInstanceOf(EntityNotFoundException.class);
+        }
 
-        PrincipalEntity principalEntity = PrincipalEntity.builder()
-                .id(user.getId())
-                .username(user.getLogin())
-                .build();
+        @Test
+        @DisplayName("Выбрасывает CredentialsException при неверном пароле")
+        void shouldThrowCredentialsExceptionWhenPasswordIsInvalid() {
+            UserEntity user = UserEntity.builder()
+                    .id(UUID.randomUUID())
+                    .login("testuserlogin")
+                    .passwordHash(passwordEncoder.encode("TestPassword"))
+                    .email("testemail")
+                    .status(UserStatus.NOT_VERIFIED)
+                    .build();
 
-        Mockito.when(userRepository.findByLogin("testuserlogin")).thenReturn(user);
-        Mockito.when(authenticationService.authenticate("testuserlogin", "TestPassword")).thenReturn(principalEntity);
+            given(userRepository.findUserByLogin("testuserlogin")).willReturn(Optional.of(user));
+
+            assertThatThrownBy(() -> authenticationService.authenticate("testuserlogin", "invalidpassword"))
+                    .isInstanceOf(CredentialsException.class);
+        }
+
+        @Test
+        @DisplayName("Возвращает PrincipalEntity при корректных учетных данных")
+        void shouldReturnPrincipalEntityWhenCredentialsAreValid() {
+            UserEntity user = UserEntity.builder()
+                    .id(UUID.randomUUID())
+                    .login("testuserlogin")
+                    .passwordHash(passwordEncoder.encode("TestPassword"))
+                    .email("testemail")
+                    .status(UserStatus.NOT_VERIFIED)
+                    .build();
+
+            given(userRepository.findUserByLogin("testuserlogin")).willReturn(Optional.of(user));
+            given(principalRepository.setPrincipal(any(PrincipalEntity.class))).willAnswer(inv -> inv.getArgument(0));
+
+            PrincipalEntity result = authenticationService.authenticate("testuserlogin", "TestPassword");
+
+            assertThat(result).isNotNull();
+            assertThat(result.getId()).isEqualTo(user.getId());
+            assertThat(result.getUsername()).isEqualTo(user.getLogin());
+        }
     }
 }
