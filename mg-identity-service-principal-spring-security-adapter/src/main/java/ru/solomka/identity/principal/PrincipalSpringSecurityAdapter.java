@@ -15,6 +15,7 @@ public class PrincipalSpringSecurityAdapter implements PrincipalRepository {
     public PrincipalEntity setPrincipal(PrincipalEntity principal) {
         PrincipalTokenAuthentication principalTokenAuthentication = new PrincipalTokenAuthentication(principal);
         SecurityContextHolder.getContext().setAuthentication(principalTokenAuthentication);
+        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(true);
         return principal;
     }
 
