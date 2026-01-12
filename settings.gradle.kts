@@ -9,6 +9,7 @@ listOf(
     "mg-identity-service-user",
     "mg-identity-service-user-spring-jpa-adapter",
     "mg-identity-service-user-spring-rest-adapter",
+    "mg-identity-service-user-spring-kafka-adapter",
 
     "mg-identity-service-access-token",
 
@@ -25,8 +26,10 @@ listOf(
     "mg-identity-service-authentication",
     "mg-identity-service-authentication-spring-security-adapter",
 
-    "mg-identity-service-kafka-adapter"
+    "mg-identity-service-verification",
+    "mg-identity-service-verification-spring-kafka-adapter",
+    "mg-identity-service-verification-spring-jpa-adapter",
+    "mg-identity-service-verification-spring-rest-adapter"
 ).forEach {
     include(it)
 }
-
