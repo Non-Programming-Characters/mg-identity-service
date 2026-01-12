@@ -35,8 +35,9 @@ public class HttpSecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers(
-                                "/v1/api/security/auth/**",
-                                "/v1/api/credentials/validator",
+                                "/api/v1/identity/security/auth/**",
+                                "/api/v1/identity/verification/**",
+                                "/api/v1/identity/credentials/validator",
                                 "/identity-mg/v3/api-docs/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
