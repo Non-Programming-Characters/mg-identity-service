@@ -1,9 +1,6 @@
 package ru.solomka.identity.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,7 +19,7 @@ public class JpaUserEntity {
 
     @Id
     @Column(name = "id", nullable = false)
-    UUID id;
+    @NonNull UUID id;
 
     @Column(name = "login", unique = true, nullable = false)
     @NonNull String login;
@@ -33,6 +30,10 @@ public class JpaUserEntity {
     @Column(name = "email", unique = true, nullable = false)
     @NonNull String email;
 
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NonNull UserStatus status;
+
     @Column(name = "created_at", nullable = false)
-    Instant createdAt;
+    @NonNull Instant createdAt;
 }

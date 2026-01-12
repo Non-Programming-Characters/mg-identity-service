@@ -4,7 +4,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.BaseJpaRepositoryAdapter;
-import ru.solomka.identity.common.exception.EntityNotFoundException;
+
+import java.util.Optional;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JpaUserEntityRepositoryAdapter extends BaseJpaRepositoryAdapter<JpaUserEntity, UserEntity> implements UserRepository {
@@ -20,14 +21,22 @@ public class JpaUserEntityRepositoryAdapter extends BaseJpaRepositoryAdapter<Jpa
     }
 
     @Override
-    public UserEntity findByLogin(String login) {
-        return crudUserRepository.findByLogin(login).map(userEntityJpaUserEntityMapper::mapToDomain)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with login '%s' not found", login)));
+    public Optional<UserEntity> findUserByLogin(String login) {
+        return this.crudUserRepository.getUserByLogin(login).map(userEntityJpaUserEntityMapper::mapToDomain);
     }
 
     @Override
-    public UserEntity findByEmail(String email) {
-        return crudUserRepository.findByEmail(email).map(userEntityJpaUserEntityMapper::mapToDomain)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("User with email '%s' not found", email)));
+    public Optional<UserEntity> findUserByEmail(String email) {
+        return this.crudUserRepository.getUserByEmail(email).map(userEntityJpaUserEntityMapper::mapToDomain);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return this.crudUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByLogin(String email) {
+        return this.crudUserRepository.existsByLogin(email);
     }
 }

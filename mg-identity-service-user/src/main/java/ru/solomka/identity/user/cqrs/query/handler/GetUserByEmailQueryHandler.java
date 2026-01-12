@@ -17,10 +17,9 @@ public class GetUserByEmailQueryHandler implements CommandHandler<GetUserByEmail
 
     @Override
     public UserEntity handle(GetUserByEmailQuery command) {
-
         if(command.getEmail().isEmpty())
             throw new IllegalArgumentException("Argument 'email' cannot be empty");
 
-        return userService.getByEmail(command.getEmail());
+        return userService.getUserByEmail(command.getEmail());
     }
 }

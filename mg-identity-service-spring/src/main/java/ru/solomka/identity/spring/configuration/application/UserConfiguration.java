@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import ru.solomka.identity.common.EntityNotification;
 import ru.solomka.identity.common.EntityNotificationService;
-import ru.solomka.identity.principal.PrincipalEntity;
-import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.user.*;
-import ru.solomka.identity.user.cqrs.command.ValidateUserCredentialCommandHandler;
+import ru.solomka.identity.user.cqrs.command.handler.ValidateUserCredentialCommandHandler;
 import ru.solomka.identity.user.cqrs.query.handler.GetUserByEmailQueryHandler;
 import ru.solomka.identity.user.cqrs.query.handler.GetUserByIdQueryHandler;
 import ru.solomka.identity.user.cqrs.query.handler.GetUserByLoginQueryHandler;
@@ -33,9 +31,8 @@ public class UserConfiguration {
     }
 
     @Bean
-    EntityNotificationService<UserEntity> userEntityNotificationService(@NonNull EntityNotification<UserEntity, PrincipalEntity> entityNotification,
-                                                                        @NonNull PrincipalService principalService) {
-        return new EntityNotificationService<>(entityNotification, principalService);
+    EntityNotificationService<UserEntity> userEntityNotificationService(@NonNull EntityNotification<UserEntity> entityNotification) {
+        return new EntityNotificationService<>(entityNotification);
     }
 
     @Bean

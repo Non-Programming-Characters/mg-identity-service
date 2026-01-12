@@ -11,6 +11,7 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .login(domainEntity.getLogin())
                 .passwordHash(domainEntity.getPasswordHash())
                 .email(domainEntity.getEmail())
+                .status(domainEntity.getStatus())
                 .createdAt(domainEntity.getCreatedAt())
                 .build();
     }
@@ -22,6 +23,7 @@ public class UserEntityJpaUserEntityMapper implements Mapper<JpaUserEntity, User
                 .login(infrastructureEntity.getLogin())
                 .passwordHash(infrastructureEntity.getPasswordHash())
                 .email(infrastructureEntity.getEmail())
+                .status(infrastructureEntity.getStatus())
                 .createdAt(infrastructureEntity.getCreatedAt())
                 .build();
     }

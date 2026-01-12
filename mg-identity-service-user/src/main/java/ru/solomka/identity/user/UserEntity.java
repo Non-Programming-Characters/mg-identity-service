@@ -26,5 +26,7 @@ public class UserEntity implements Entity {
 
     @NonNull String email;
 
+    @NonNull UserStatus status;
+
     Instant createdAt;
 }

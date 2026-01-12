@@ -5,8 +5,10 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.EntityService;
+import ru.solomka.identity.common.exception.EntityNotFoundException;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -44,11 +46,29 @@ public class UserService extends EntityService<UserEntity> {
         return deletedUserEntity;
     }
 
-    public UserEntity getByLogin(@NonNull String login){
-        return userRepository.findByLogin(login);
+    public UserEntity getUserByLogin(String login) {
+        return this.userRepository.findUserByLogin(login)
+                .orElseThrow(() -> new EntityNotFoundException("User with login '%s' not found".formatted(login)));
     }
 
-    public UserEntity getByEmail(@NonNull String email){
-        return userRepository.findByEmail(email);
+    public UserEntity getUserByEmail(String email) {
+        return this.userRepository.findUserByLogin(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email '%s' not found".formatted(email)));
+    }
+
+    public boolean existsByEmail(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
+    public boolean existsByLogin(String email) {
+        return this.userRepository.existsByLogin(email);
+    }
+
+    public Optional<UserEntity> findUserByLogin(@NonNull String login) {
+        return userRepository.findUserByLogin(login);
+    }
+
+    public Optional<UserEntity> findUserByEmail(@NonNull String email){
+        return userRepository.findUserByEmail(email);
     }
 }

@@ -1,13 +1,12 @@
-package ru.solomka.identity.user.cqrs.command;
+package ru.solomka.identity.user.cqrs.command.handler;
 
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.user.UserEntity;
-import ru.solomka.identity.user.UserService;
+import ru.solomka.identity.user.cqrs.command.ValidateUserCredentialCommand;
 import ru.solomka.identity.user.exception.CredentialValidationException;
 import ru.solomka.identity.user.exception.ValidationException;
 
@@ -19,8 +18,6 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ValidateUserCredentialCommandHandler implements CommandHandler<ValidateUserCredentialCommand, String> {
-
-    @NonNull UserService userService;
 
     @Override
     public String handle(ValidateUserCredentialCommand command) {
@@ -42,10 +39,8 @@ public class ValidateUserCredentialCommandHandler implements CommandHandler<Vali
         switch (command.getType()) {
             case "login" -> {
                 Pattern userLoginPattern = Pattern.compile("^[a-zA-Z][a-zA-Z0-9-\\\\.]{1,20}$");
-
                 try {
-                    UserEntity optionalUserEntity = userService.getByLogin(command.getData());
-                    if(!userLoginPattern.matcher(optionalUserEntity.getLogin()).matches())
+                    if(!userLoginPattern.matcher(command.getData()).matches())
                         throw new CredentialValidationException("The login validation attempt failed (Incorrect login content format)");
 
                     return command.getData();

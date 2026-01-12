@@ -5,6 +5,10 @@ import ru.solomka.identity.common.EntityRepository;
 import java.util.Optional;
 
 public interface UserRepository extends EntityRepository<UserEntity> {
-    UserEntity findByLogin(String login);
-    UserEntity findByEmail(String email);
+    Optional<UserEntity> findUserByLogin(String login);
+    Optional<UserEntity> findUserByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByLogin(String login);
 }

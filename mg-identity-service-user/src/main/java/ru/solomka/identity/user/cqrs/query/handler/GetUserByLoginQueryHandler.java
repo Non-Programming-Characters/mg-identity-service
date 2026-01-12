@@ -17,10 +17,9 @@ public class GetUserByLoginQueryHandler implements CommandHandler<GetUserByLogin
 
     @Override
     public UserEntity handle(GetUserByLoginQuery command) {
-
         if(command.getLogin().isEmpty())
             throw new IllegalArgumentException("Argument 'login' cannot be empty");
 
-        return userService.getByLogin(command.getLogin());
+        return userService.getUserByLogin(command.getLogin());
     }
 }
