@@ -21,7 +21,7 @@ public class AuthenticationService {
 
     public @NonNull PrincipalEntity authenticate(String login, String password) {
         try {
-            UserEntity userEntity = userService.getByLogin(login);
+            UserEntity userEntity = userService.getUserByLogin(login);
 
             if (!encoderDelegate.matches(userEntity.getPasswordHash(), password))
                 throw new CredentialsException("Wrong password!");

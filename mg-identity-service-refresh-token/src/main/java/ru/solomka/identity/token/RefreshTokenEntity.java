@@ -18,5 +18,5 @@ public class RefreshTokenEntity implements Entity {
 
     UUID id;
 
-    @NonNull Instant createdAt;
+    Instant createdAt;
 }
