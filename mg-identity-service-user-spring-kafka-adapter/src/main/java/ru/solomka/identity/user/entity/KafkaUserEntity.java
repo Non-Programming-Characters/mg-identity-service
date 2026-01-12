@@ -1,4 +1,4 @@
-package ru.solomka.identity.kafka.entity;
+package ru.solomka.identity.user.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +16,8 @@ import java.util.UUID;
 public class KafkaUserEntity {
 
     @NonNull UUID id;
+
+    @NonNull String login;
 
     @NonNull String email;
 
