@@ -56,7 +56,7 @@ public class UserConfiguration {
     }
 
     @Bean
-    ValidateUserCredentialCommandHandler validateUserCredentialCommandHandler(@NonNull UserService userService) {
-        return new ValidateUserCredentialCommandHandler(userService);
+    ValidateUserCredentialCommandHandler validateUserCredentialCommandHandler() {
+        return new ValidateUserCredentialCommandHandler();
     }
 }
