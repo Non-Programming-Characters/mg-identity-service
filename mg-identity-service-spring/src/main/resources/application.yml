@@ -7,6 +7,8 @@ service:
     lifetime: ${REFRESH_TOKEN_LIFETIME}
     private-key-path: ${REFRESH_TOKEN_PRIVATE_KEY_PATH}
     public-key-path: ${REFRESH_TOKEN_PUBLIC_KEY_PATH}
+  verification-properties:
+    lifetime: ${VERIFICATION_LIFETIME}
 
 logging:
   level:
@@ -21,7 +23,22 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    bootstrap-servers: kafka:29092
+      properties:
+        retries: 2147483647
+        retry.backoff.ms: 1000
+        acks: all
+        enable.idempotence: true
+    consumer:
+      group-id: mg-identity-service-kafka-consumer
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        session.timeout.ms: 45000
+        heartbeat.interval.ms: 15000
+        max.poll.interval.ms: 300000
+    bootstrap-servers: event-router-kafka:29092
 
   application:
     name: ${APPLICATION_PROJECT_NAME}
