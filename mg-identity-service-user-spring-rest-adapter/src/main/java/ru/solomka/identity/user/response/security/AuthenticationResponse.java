@@ -18,10 +18,4 @@ public class AuthenticationResponse {
             example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xxxxx"
     )
     @NonNull String accessToken;
-
-    @Schema(
-            description = "Refresh token (JWT) for obtaining new access tokens",
-            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.yyyyy"
-    )
-    @NonNull String refreshToken;
 }

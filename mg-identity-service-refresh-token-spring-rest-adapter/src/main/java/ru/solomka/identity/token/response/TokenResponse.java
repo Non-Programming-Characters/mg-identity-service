@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TokenPairResponse {
+public class TokenResponse {
 
     @Schema(
             description = "Newly issued access token (JWT)",
@@ -19,12 +19,4 @@ public class TokenPairResponse {
     )
     @NonNull
     String accessToken;
-
-    @Schema(
-            description = "Newly issued refresh token (JWT)",
-            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.def456",
-            requiredMode = Schema.RequiredMode.REQUIRED
-    )
-    @NonNull
-    String refreshToken;
 }

@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,9 @@ import ru.solomka.identity.user.request.RegistrationRequest;
 import ru.solomka.identity.user.response.security.AuthenticationResponse;
 import ru.solomka.identity.user.response.security.RegistrationResponse;
 
+import java.time.Duration;
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api/v1/identity/public/security/auth")
 @RequiredArgsConstructor
@@ -33,6 +38,8 @@ public class UserSecurityRestController {
 
     @NonNull CommandHandler<RegistrationCommand, UserEntity> registrationCommandHandler;
     @NonNull CommandHandler<AuthenticationCommand, TokenPair> authenticationCommandHandler;
+
+    @NonNull
 
     @PostMapping(value = "/signin", produces = "application/json")
     @Operation(
@@ -53,15 +60,30 @@ public class UserSecurityRestController {
                     required = true,
                     content = @Content(schema = @Schema(implementation = AuthenticationRequest.class))
             )
-            @RequestBody AuthenticationRequest authenticationRequest
+            @RequestBody AuthenticationRequest authenticationRequest,
+            HttpServletResponse response
     ) {
         TokenPair tokenPair = authenticationCommandHandler.handle(new AuthenticationCommand(
                 authenticationRequest.getLogin(),
                 authenticationRequest.getPassword()
         ));
+
+        long maxAgeSeconds = Duration.between(Instant.now(), tokenPair.getRefreshToken().getExpiredAt()).getSeconds();
+        if (maxAgeSeconds <= 0) {
+            throw new IllegalStateException("Refresh token already expired");
+        }
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("REFRESH_TOKEN", tokenPair.getRefreshToken().getToken())
+                .httpOnly(true)
+                .sameSite("Lax")
+                .path("/api/v1/identity")
+                .maxAge(maxAgeSeconds)
+                .build();
+
+        response.addHeader("Set-Cookie", refreshTokenCookie.toString());
+
         return ResponseEntity.ok(AuthenticationResponse.builder()
                 .accessToken(tokenPair.getAccessToken().getToken())
-                .refreshToken(tokenPair.getRefreshToken().getToken())
                 .build());
     }
 

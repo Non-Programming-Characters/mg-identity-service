@@ -40,7 +40,7 @@ public class VerificationPushProcessCommandHandler implements CommandHandler<Ver
 
         VerificationEntity verificationEntity = VerificationEntity.builder()
                 .receiverId(command.getEntityId())
-                .payload(UUID.randomUUID().toString().substring(0, 8))
+                .payload(UUID.randomUUID().toString().substring(0, 5))
                 .type(VerificationType.ACCOUNT_ACTIVATION)
                 .expiredAt(Instant.now().plus(verificationLifetime.toSeconds(), ChronoUnit.SECONDS))
                 .build();
