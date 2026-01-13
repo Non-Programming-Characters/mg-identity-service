@@ -10,8 +10,6 @@
     docker build -t mg-identity-service .
     docker-compose up
     ```
-5. После **шага 4** у Вас будет доступна документация по [ссылке](http://localhost:8081/identity-mg/v3/api-docs/index.html)
-
 
 > [!TIP]
 > Все основные тесты проходят на ветке **dev**
