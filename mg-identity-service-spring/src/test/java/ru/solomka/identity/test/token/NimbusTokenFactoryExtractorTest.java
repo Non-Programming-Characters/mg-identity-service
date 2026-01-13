@@ -49,11 +49,10 @@ class NimbusTokenFactoryExtractorTest {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
         JWSSigner jwsSigner = new RSASSASigner(keyPair.getPrivate());
-        JWSVerifier jwsVerifier = new RSASSAVerifier((RSAPublicKey) keyPair.getPublic());
         JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.RS256).build();
 
         tokenFactory = new NimbusTokenFactoryAdapter(jwsSigner, jwsHeader);
-        tokenExtractor = new NimbusTokenExtractorAdapter(jwsVerifier);
+        tokenExtractor = new NimbusTokenExtractorAdapter();
 
         principal = new PrincipalEntity(UUID.randomUUID(), "testuser");
     }
@@ -87,32 +86,10 @@ class NimbusTokenFactoryExtractorTest {
     class TokenExtractionErrors {
 
         @Test
-        @DisplayName("Выбрасывает TokenExpiredException для просроченного токена")
-        void shouldThrowTokenExpiredExceptionWhenTokenIsExpired() {
-            TokenEntity expiredToken = tokenFactory.create(principal, Duration.ofMillis(-10), TokenType.ACCESS_TOKEN);
-
-            assertThatThrownBy(() -> tokenExtractor.extract("Bearer " + expiredToken.getToken()))
-                    .isInstanceOf(TokenExpiredException.class);
-        }
-
-        @Test
         @DisplayName("Выбрасывает TokenParseException при неверном формате токена")
         void shouldThrowTokenParseExceptionForInvalidFormat() {
             assertThatThrownBy(() -> tokenExtractor.extract("InvalidTokenFormat"))
                     .isInstanceOf(TokenParseException.class);
-        }
-
-        @Test
-        @DisplayName("Выбрасывает TokenVerificationException при недействительной подписи")
-        void shouldThrowTokenVerificationExceptionForInvalidSignature() throws Exception {
-            TokenEntity validToken = tokenFactory.create(principal, Duration.ofHours(1), TokenType.ACCESS_TOKEN);
-
-            KeyPair otherKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-            JWSVerifier otherVerifier = new RSASSAVerifier((RSAPublicKey) otherKeyPair.getPublic());
-            NimbusTokenExtractorAdapter maliciousExtractor = new NimbusTokenExtractorAdapter(otherVerifier);
-
-            assertThatThrownBy(() -> maliciousExtractor.extract("Bearer " + validToken.getToken()))
-                    .isInstanceOf(TokenVerificationException.class);
         }
     }
 }

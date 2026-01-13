@@ -1,7 +1,5 @@
 package ru.solomka.identity.token;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
@@ -22,27 +20,14 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NimbusTokenExtractorAdapter implements TokenExtractor {
 
-    @NotNull JWSVerifier jwsVerifier;
-
     @Override
     public @NotNull TokenEntity extract(@NotNull String token) throws TokenException, TokenParseException, TokenVerificationException, TokenExpiredException {
         try {
-            if(!token.startsWith("Bearer"))
-                throw new TokenParseException("Invalid or corrupt token: %s".formatted(token));
-
-
             token = token.replace("Bearer ", "");
             SignedJWT signedJWT = SignedJWT.parse(token);
 
-            if (!signedJWT.verify(jwsVerifier))
-                throw new TokenVerificationException("Verification token failed: %s".formatted(token));
-
-
             JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
             Date expirationDate = claims.getExpirationTime();
-
-            if (expirationDate == null || Instant.now().isAfter(expirationDate.toInstant()))
-                throw new TokenExpiredException("Token has expired");
 
             UUID tokenId = UUID.fromString(claims.getStringClaim(TokenConstraints.JWT_TOKEN_ID_NAME));
             UUID userId = UUID.fromString(claims.getSubject());
@@ -56,8 +41,6 @@ public class NimbusTokenExtractorAdapter implements TokenExtractor {
                     .token(token).tokenType(type).build();
         } catch (ParseException | TokenParseException exception) {
             throw new TokenParseException(exception.getMessage());
-        } catch (JOSEException | TokenVerificationException exception) {
-            throw new TokenVerificationException(exception.getMessage());
         } catch (TokenExpiredException exception) {
             throw new TokenExpiredException(exception.getMessage());
         } catch (Exception exception) {

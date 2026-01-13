@@ -19,8 +19,8 @@ public class TokenConfiguration {
     }
 
     @Bean
-    NimbusTokenExtractorAdapter nimbusTokenExtractorAdapter(JWSVerifier jwsVerifier) {
-        return new NimbusTokenExtractorAdapter(jwsVerifier);
+    NimbusTokenExtractorAdapter nimbusTokenExtractorAdapter() {
+        return new NimbusTokenExtractorAdapter();
     }
 
     @Bean
