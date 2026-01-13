@@ -22,7 +22,7 @@ import ru.solomka.identity.verification.request.VerificationPushRequest;
 import ru.solomka.identity.verification.response.VerificationResponse;
 
 @RestController
-@RequestMapping("/api/v1/identity/verification")
+@RequestMapping("/api/v1/identity/public/verification")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Identity Verification", description = "API for managing user verification process (requesting and validating confirmation codes)")

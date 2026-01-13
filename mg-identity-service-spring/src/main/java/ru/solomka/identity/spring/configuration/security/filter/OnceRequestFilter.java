@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.solomka.identity.principal.PrincipalEntity;
@@ -30,14 +31,19 @@ public class OnceRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+        String forwardedBy = request.getHeader("X-Forwarded-By");
 
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (!forwardedBy.equals("gateway-service")) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return;
+        }
+
+        if (request.getRequestURI().contains("/public/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        TokenEntity tokenEntity = tokenExtractor.extract(authorizationHeader);
+        TokenEntity tokenEntity = tokenExtractor.extract(request.getHeader("Authorization").split(" ")[1]);
 
         if(tokenEntity != null) {
             UserEntity userEntity = userService.getById(tokenEntity.getUserId());
@@ -50,6 +56,6 @@ public class OnceRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.contains("/v3/swagger-ui");
+        return path.contains("/public/docs");
     }
 }

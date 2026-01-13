@@ -20,7 +20,7 @@ import ru.solomka.identity.user.request.ValidateCredentialsRequest;
 import ru.solomka.identity.user.response.validation.UserValidateCredentialsResponse;
 
 @RestController
-@RequestMapping("/api/v1/identity/credentials/validator")
+@RequestMapping("/api/v1/identity/public/credentials/validator")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Credential Validation", description = "API for validating and returning normalized user credentials (e.g., login, email)")

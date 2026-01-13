@@ -11,8 +11,6 @@ services:
       - spring.jpa.hibernate.ddl-auto=update
       - spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
       - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-    ports:
-      - '8081:8081'
     networks:
       - mgi-backend-wrapper-network
     depends_on:

@@ -61,9 +61,19 @@ spring:
     properties:
       hibernate.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
+eureka:
+  instance:
+    hostname: mg-identity-service
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://mg-gateway-server-service:8761/eureka/
+
 springdoc:
   api-docs:
     enabled: true
+    path: /identity/public/v3/api-docs
   swagger-ui:
-    enabled: true
-    path: /identity-mg/v3/api-docs/index.html
+    enabled: false

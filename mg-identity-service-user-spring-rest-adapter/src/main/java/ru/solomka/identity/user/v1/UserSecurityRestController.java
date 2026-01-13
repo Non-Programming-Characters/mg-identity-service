@@ -25,7 +25,7 @@ import ru.solomka.identity.user.response.security.AuthenticationResponse;
 import ru.solomka.identity.user.response.security.RegistrationResponse;
 
 @RestController
-@RequestMapping("/api/v1/identity/security/auth")
+@RequestMapping("/api/v1/identity/public/security/auth")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Authentication & Registration", description = "API for user sign-in and sign-up")

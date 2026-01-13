@@ -22,7 +22,7 @@ import ru.solomka.identity.token.request.TokenRefreshRequest;
 import ru.solomka.identity.token.response.TokenPairResponse;
 
 @RestController
-@RequestMapping("/api/v1/identity/security/token")
+@RequestMapping("/api/v1/identity/public/security/token")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Token Management", description = "API for issuing and refreshing JWT tokens")
