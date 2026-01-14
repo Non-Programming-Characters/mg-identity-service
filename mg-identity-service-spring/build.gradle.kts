@@ -10,6 +10,9 @@ dependencies {
 
     implementation(rootProject.libs.springframework.spring.boot.eureka.client)
 
+    implementation(rootProject.libs.flywaydb.flyway.core)
+    implementation(rootProject.libs.flywaydb.flyway.database.postgresql)
+
     implementation(rootProject.libs.springframework.spring.boot.kafka)
 
     implementation(libs.springdoc.springdoc.openapi.starter.webmvc.ui)

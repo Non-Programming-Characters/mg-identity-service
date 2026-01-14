@@ -19,6 +19,15 @@ server:
   port: ${APPLICATION_PORT}
 
 spring:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:migration
+    encoding: UTF-8
+    validate-on-migrate: true
+    url: ${DATASOURCE_URL}
+    user: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -57,7 +66,7 @@ spring:
     generate-ddl: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 

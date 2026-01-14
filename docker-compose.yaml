@@ -18,7 +18,7 @@ services:
       - swagger-ui
 
   postgres:
-    image: postgres:14.1-alpine
+    image: postgres:15-alpine
     hostname: postgres-mg-identity-service
     restart: always
     environment:

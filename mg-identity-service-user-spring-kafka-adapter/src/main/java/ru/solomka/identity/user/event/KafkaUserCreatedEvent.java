@@ -2,7 +2,6 @@ package ru.solomka.identity.user.event;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.solomka.identity.user.entity.KafkaUserEntity;
 
 import java.time.Instant;
 import java.util.UUID;

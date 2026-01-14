@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.solomka.identity.common.EntityNotification;
-import ru.solomka.identity.user.entity.KafkaUserEntity;
 import ru.solomka.identity.user.event.KafkaUserCreatedEvent;
 import ru.solomka.identity.user.event.KafkaUserDeletedEvent;
 import ru.solomka.identity.user.event.KafkaUserUpdatedEvent;
