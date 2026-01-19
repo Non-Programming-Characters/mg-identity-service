@@ -9,6 +9,7 @@ import ru.solomka.identity.common.EntityNotification;
 import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.mapper.Mapper;
 import ru.solomka.identity.spring.configuration.properties.VerificationPropertiesConfiguration;
+import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserService;
 import ru.solomka.identity.verification.*;
 import ru.solomka.identity.verification.cqrs.handler.VerificationHandleProcessCommandHandler;
@@ -54,7 +55,8 @@ public class VerificationConfiguration {
 
     @Bean
     VerificationHandleProcessCommandHandler verificationHandleProcessCommandhandler(@NonNull VerificationService verificationService,
+                                                                                    @NonNull EntityNotificationService<UserEntity> entityEntityNotificationService,
                                                                                     @NonNull UserService userService) {
-        return new VerificationHandleProcessCommandHandler(verificationService, userService);
+        return new VerificationHandleProcessCommandHandler(verificationService, entityEntityNotificationService, userService);
     }
 }

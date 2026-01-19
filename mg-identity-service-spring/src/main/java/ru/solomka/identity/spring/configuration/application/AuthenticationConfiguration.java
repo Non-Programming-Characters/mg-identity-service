@@ -11,7 +11,6 @@ import ru.solomka.identity.authentication.cqrs.handler.AuthenticationCommandHand
 import ru.solomka.identity.authentication.cqrs.handler.RegistrationCommandHandler;
 import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.spring.configuration.properties.TokenPropertiesConfiguration;
-import ru.solomka.identity.token.RefreshTokenService;
 import ru.solomka.identity.token.TokenPairFactory;
 import ru.solomka.identity.user.UserService;
 
@@ -32,27 +31,22 @@ public class AuthenticationConfiguration {
 
     @Bean
     AuthenticationCommandHandler authenticationCommandHandler(@NonNull AuthenticationService authenticationService,
-                                                              @NonNull EncoderDelegate encoderDelegate,
                                                               @NonNull TokenPairFactory tokenPairFactory,
-                                                              @NonNull RefreshTokenService refreshTokenService,
                                                               @NonNull TokenPropertiesConfiguration tokenPropertiesConfiguration) {
         return new AuthenticationCommandHandler(
                 authenticationService,
                 tokenPairFactory,
-                refreshTokenService,
                 tokenPropertiesConfiguration.getAccessToken().getLifetime(),
                 tokenPropertiesConfiguration.getRefreshToken().getLifetime()
         );
     }
     @Bean
-    RegistrationCommandHandler registrationCommandHandler(@NonNull PrincipalService principalService,
-                                                            @NonNull EncoderDelegate encoderDelegate,
-                                                            @NonNull UserService userService
+    RegistrationCommandHandler registrationCommandHandler(@NonNull EncoderDelegate encoderDelegate,
+                                                          @NonNull UserService userService
     ) {
         return new RegistrationCommandHandler(
                 userService,
-                encoderDelegate,
-                principalService
+                encoderDelegate
         );
     }
 }

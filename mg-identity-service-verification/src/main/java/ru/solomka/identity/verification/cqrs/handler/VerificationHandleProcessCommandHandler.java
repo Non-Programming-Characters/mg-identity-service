@@ -4,13 +4,13 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 import ru.solomka.identity.user.UserEntity;
 import ru.solomka.identity.user.UserService;
 import ru.solomka.identity.user.UserStatus;
 import ru.solomka.identity.verification.VerificationEntity;
-import ru.solomka.identity.verification.VerificationPair;
 import ru.solomka.identity.verification.VerificationService;
 import ru.solomka.identity.verification.VerificationType;
 import ru.solomka.identity.verification.cqrs.VerificationHandleProcessCommand;
@@ -24,6 +24,8 @@ import java.time.Instant;
 public class VerificationHandleProcessCommandHandler implements CommandHandler<VerificationHandleProcessCommand, Boolean> {
 
     @NonNull VerificationService verificationService;
+
+    @NonNull EntityNotificationService<UserEntity> entityEntityNotificationService;
 
     @NonNull UserService userService;
 
@@ -51,6 +53,8 @@ public class VerificationHandleProcessCommandHandler implements CommandHandler<V
         if(verificationEntity.getType() == VerificationType.ACCOUNT_ACTIVATION) {
             UserEntity userEntity = userService.getById(command.getEntityId());
             userEntity.setStatus(UserStatus.VERIFIED);
+
+            entityEntityNotificationService.notifyCreated(userEntity);
             userService.update(userEntity);
         }
 

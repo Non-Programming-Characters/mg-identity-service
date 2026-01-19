@@ -31,15 +31,13 @@ public class OnceRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String forwardedBy = request.getHeader("X-Forwarded-By");
-
-        if (!forwardedBy.equals("gateway-service")) {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
+        if (request.getRequestURI().contains("/public/")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        if (request.getRequestURI().contains("/public/")) {
-            filterChain.doFilter(request, response);
+        if(request.getHeader("X-Forwarded-By") == null || !request.getHeader("X-Forwarded-By").equals("gateway-service")) {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             return;
         }
 

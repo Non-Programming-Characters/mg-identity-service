@@ -48,7 +48,7 @@ class UserTest {
     class CreateUser {
 
         @Test
-        @DisplayName("Создаёт пользователя и отправляет уведомление о создании")
+        @DisplayName("Создаёт пользователя")
         void shouldCreateUserAndNotify() {
             UserEntity newUser = UserEntity.builder()
                     .login("newuser")
@@ -72,7 +72,6 @@ class UserTest {
 
             assertThat(result).usingRecursiveComparison().ignoringFields("createdAt").isEqualTo(savedUser);
             verify(userRepository).create(newUser);
-            verify(userNotification).notifyCreate(savedUser);
         }
     }
 

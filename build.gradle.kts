@@ -52,6 +52,10 @@ subprojects {
         mainClass = "ru.solomka.identity.spring.MgIdentityService"
     }
 
+    configurations.all {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
+
     dependencyManagement {
         imports {
             mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)

@@ -8,7 +8,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_users_login", columnList = "login", unique = true),
+        @Index(name = "idx_users_email", columnList = "email", unique = true)
+})
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Getter

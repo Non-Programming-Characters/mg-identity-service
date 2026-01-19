@@ -7,7 +7,6 @@ import ru.solomka.identity.common.EntityNotificationService;
 import ru.solomka.identity.common.EntityService;
 import ru.solomka.identity.common.exception.EntityNotFoundException;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,14 +21,6 @@ public class UserService extends EntityService<UserEntity> {
         super(repository);
         this.userRepository = repository;
         this.notificationService = notificationService;
-    }
-
-    @Override
-    public UserEntity create(UserEntity entity) {
-        entity.setCreatedAt(Instant.now());
-        UserEntity createdUserEntity = super.create(entity);
-        notificationService.notifyCreated(createdUserEntity);
-        return createdUserEntity;
     }
 
     @Override

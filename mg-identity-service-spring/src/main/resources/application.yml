@@ -16,6 +16,9 @@ logging:
     org.springframework.http.server.reactive: DEBUG
 
 server:
+  tomcat:
+    threads:
+      max: 1000
   port: ${APPLICATION_PORT}
 
 spring:
@@ -60,6 +63,9 @@ spring:
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     url: ${DATASOURCE_URL}
+    hikari:
+      maximum-pool-size: 50
+      connection-timeout: 5000
 
   jpa:
     open-in-view: false
@@ -67,8 +73,13 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
+
     properties:
       hibernate.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        jdbc:
+          batch_size: 25
+          batch_versioned_data: true
 
 eureka:
   instance:
