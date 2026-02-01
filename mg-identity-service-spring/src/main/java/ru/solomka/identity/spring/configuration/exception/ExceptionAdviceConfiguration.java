@@ -16,6 +16,9 @@ import ru.solomka.identity.token.exception.TokenExpiredException;
 import ru.solomka.identity.token.exception.TokenParseException;
 import ru.solomka.identity.token.exception.TokenVerificationException;
 import ru.solomka.identity.user.exception.CredentialValidationException;
+import ru.solomka.identity.user.exception.ValidationException;
+import ru.solomka.identity.verification.exception.VerificationException;
+import ru.solomka.identity.verification.exception.VerificationTimeoutException;
 
 import java.util.List;
 
@@ -81,6 +84,15 @@ public class ExceptionAdviceConfiguration {
 
     @Bean
     @Order(0)
+    ExceptionFormatProvider validationExceptionFormatProvider() {
+        return new StatusCodeRangeExceptionFormatProvider(
+                403,
+                ValidationException.class
+        );
+    }
+
+    @Bean
+    @Order(0)
     ExceptionFormatProvider tokenExpiredExceptionFormatProvider() {
         return new StatusCodeRangeExceptionFormatProvider(
                 422,
@@ -103,6 +115,24 @@ public class ExceptionAdviceConfiguration {
         return new StatusCodeRangeExceptionFormatProvider(
                 422,
                 TokenVerificationException.class
+        );
+    }
+
+    @Bean
+    @Order(0)
+    ExceptionFormatProvider verificationExceptionFormatProvider() {
+        return new StatusCodeRangeExceptionFormatProvider(
+                422,
+                VerificationException.class
+        );
+    }
+
+    @Bean
+    @Order(0)
+    ExceptionFormatProvider verificationTimeoutExceptionFormatProvider() {
+        return new StatusCodeRangeExceptionFormatProvider(
+                410,
+                VerificationTimeoutException.class
         );
     }
 

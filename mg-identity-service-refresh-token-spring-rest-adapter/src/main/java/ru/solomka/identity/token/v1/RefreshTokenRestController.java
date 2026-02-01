@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.solomka.identity.common.cqrs.CommandHandler;
+import ru.solomka.identity.common.exception.HttpExtractPayloadException;
 import ru.solomka.identity.token.TokenPair;
 import ru.solomka.identity.token.cqrs.IssueTokenPairCommand;
-import ru.solomka.identity.token.exception.ExtractRefreshCookieException;
 import ru.solomka.identity.token.response.TokenResponse;
 
 import java.time.Duration;
@@ -66,13 +66,13 @@ public class RefreshTokenRestController {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null || cookies.length == 0) {
-            throw new ExtractRefreshCookieException("No cookies provided");
+            throw new HttpExtractPayloadException("No cookies provided");
         }
 
         String refreshToken = Arrays.stream(request.getCookies()).toList().stream()
                 .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))
                 .map(Cookie::getValue)
-                .findAny().orElseThrow(() -> new ExtractRefreshCookieException("No cookie found suitable for this operation"));
+                .findAny().orElseThrow(() -> new HttpExtractPayloadException("No cookie found suitable for this operation"));
 
         TokenPair tokenPair = issueTokenPairCommandHandler.handle(
                 new IssueTokenPairCommand(refreshToken)

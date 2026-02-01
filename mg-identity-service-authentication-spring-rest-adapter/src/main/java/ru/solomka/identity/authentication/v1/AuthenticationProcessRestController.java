@@ -1,4 +1,4 @@
-package ru.solomka.identity.user.v1;
+package ru.solomka.identity.authentication.v1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,13 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.solomka.identity.authentication.cqrs.AuthenticationCommand;
 import ru.solomka.identity.authentication.cqrs.RegistrationCommand;
+import ru.solomka.identity.authentication.request.SigninRequest;
+import ru.solomka.identity.authentication.request.SignupRequest;
+import ru.solomka.identity.authentication.response.SigninResponse;
+import ru.solomka.identity.authentication.response.SignupResponse;
 import ru.solomka.identity.common.cqrs.CommandHandler;
 import ru.solomka.identity.token.TokenPair;
+import ru.solomka.identity.token.exception.TokenExpiredException;
 import ru.solomka.identity.user.UserEntity;
-import ru.solomka.identity.user.request.AuthenticationRequest;
-import ru.solomka.identity.user.request.RegistrationRequest;
-import ru.solomka.identity.user.response.security.AuthenticationResponse;
-import ru.solomka.identity.user.response.security.RegistrationResponse;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -34,12 +35,10 @@ import java.time.Instant;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Authentication & Registration", description = "API for user sign-in and sign-up")
-public class UserSecurityRestController {
+public class AuthenticationProcessRestController {
 
     @NonNull CommandHandler<RegistrationCommand, UserEntity> registrationCommandHandler;
     @NonNull CommandHandler<AuthenticationCommand, TokenPair> authenticationCommandHandler;
-
-    @NonNull
 
     @PostMapping(value = "/signin", produces = "application/json")
     @Operation(
@@ -49,18 +48,18 @@ public class UserSecurityRestController {
     @ApiResponse(
             responseCode = "200",
             description = "Authentication successful",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthenticationResponse.class))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SigninRequest.class))
     )
     @ApiResponse(responseCode = "400", description = "Bad Request: Missing or empty credentials", content = @Content)
     @ApiResponse(responseCode = "401", description = "Unauthorized: Invalid login or password", content = @Content)
     @ApiResponse(responseCode = "403", description = "Forbidden: Account is not verified or blocked", content = @Content)
-    public ResponseEntity<AuthenticationResponse> signinUser(
+    public ResponseEntity<SigninResponse> signinUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "User credentials for authentication",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = AuthenticationRequest.class))
+                    content = @Content(schema = @Schema(implementation = SigninRequest.class))
             )
-            @RequestBody AuthenticationRequest authenticationRequest,
+            @RequestBody SigninRequest authenticationRequest,
             HttpServletResponse response
     ) {
         TokenPair tokenPair = authenticationCommandHandler.handle(new AuthenticationCommand(
@@ -69,9 +68,8 @@ public class UserSecurityRestController {
         ));
 
         long maxAgeSeconds = Duration.between(Instant.now(), tokenPair.getRefreshToken().getExpiredAt()).getSeconds();
-        if (maxAgeSeconds <= 0) {
-            throw new IllegalStateException("Refresh token already expired");
-        }
+        if (maxAgeSeconds <= 0)
+            throw new TokenExpiredException("Refresh token already expired");
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("REFRESH_TOKEN", tokenPair.getRefreshToken().getToken())
                 .httpOnly(true)
@@ -82,9 +80,7 @@ public class UserSecurityRestController {
 
         response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-        return ResponseEntity.ok(AuthenticationResponse.builder()
-                .accessToken(tokenPair.getAccessToken().getToken())
-                .build());
+        return ResponseEntity.ok(new SigninResponse(tokenPair.getAccessToken().getToken()));
     }
 
     @PostMapping(value = "/signup", produces = "application/json")
@@ -95,17 +91,17 @@ public class UserSecurityRestController {
     @ApiResponse(
             responseCode = "200",
             description = "User registered successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegistrationResponse.class))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignupResponse.class))
     )
     @ApiResponse(responseCode = "400", description = "Bad Request: Invalid or missing fields (e.g., malformed email, weak password)", content = @Content)
     @ApiResponse(responseCode = "409", description = "Conflict: Login or email already exists", content = @Content)
-    public ResponseEntity<RegistrationResponse> signupUser(
+    public ResponseEntity<SignupResponse> signupUser(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "New user registration details",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = RegistrationRequest.class))
+                    content = @Content(schema = @Schema(implementation = SigninRequest.class))
             )
-            @RequestBody RegistrationRequest registrationRequest
+            @RequestBody SignupRequest registrationRequest
     ) {
         UserEntity userEntity = registrationCommandHandler.handle(new RegistrationCommand(
                 registrationRequest.getLogin(),
@@ -113,9 +109,9 @@ public class UserSecurityRestController {
                 registrationRequest.getEmail()
         ));
 
-        return ResponseEntity.ok(RegistrationResponse.builder()
-                .login(userEntity.getLogin())
-                .email(userEntity.getEmail())
-                .build());
+        return ResponseEntity.ok(new SignupResponse(
+                userEntity.getLogin(),
+                userEntity.getEmail()
+        ));
     }
 }

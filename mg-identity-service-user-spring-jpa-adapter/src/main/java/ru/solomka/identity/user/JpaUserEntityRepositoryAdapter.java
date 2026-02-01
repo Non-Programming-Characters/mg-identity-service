@@ -3,7 +3,9 @@ package ru.solomka.identity.user;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.solomka.identity.common.BaseJpaRepositoryAdapter;
+import ru.solomka.identity.common.exception.EntityAlreadyExistsException;
 
 import java.util.Optional;
 
@@ -18,6 +20,15 @@ public class JpaUserEntityRepositoryAdapter extends BaseJpaRepositoryAdapter<Jpa
         super(repository, mapper);
         this.crudUserRepository = repository;
         this.userEntityJpaUserEntityMapper = mapper;
+    }
+
+    @Override
+    public UserEntity create(UserEntity entity) {
+        try {
+            return super.create(entity);
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityAlreadyExistsException("User with email or login already exists");
+        }
     }
 
     @Override

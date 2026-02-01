@@ -25,6 +25,7 @@ listOf(
 
     "mg-identity-service-authentication",
     "mg-identity-service-authentication-spring-security-adapter",
+    "mg-identity-service-authentication-spring-rest-adapter",
 
     "mg-identity-service-verification",
     "mg-identity-service-verification-spring-kafka-adapter",

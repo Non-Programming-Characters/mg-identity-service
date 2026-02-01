@@ -1,4 +1,4 @@
-package ru.solomka.identity.user.request;
+package ru.solomka.identity.authentication.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Schema(description = "New user registration data")
-public class RegistrationRequest {
+public class SignupRequest {
 
     @Schema(description = "Desired unique login", example = "newuser123", requiredMode = Schema.RequiredMode.REQUIRED)
     @NonNull String login;

@@ -8,9 +8,11 @@ import ru.solomka.identity.authentication.AuthenticationService;
 import ru.solomka.identity.authentication.EncoderDelegate;
 import ru.solomka.identity.authentication.EncoderDelegateAdapter;
 import ru.solomka.identity.authentication.cqrs.handler.AuthenticationCommandHandler;
+import ru.solomka.identity.authentication.cqrs.handler.LogoutCommandHandler;
 import ru.solomka.identity.authentication.cqrs.handler.RegistrationCommandHandler;
 import ru.solomka.identity.principal.PrincipalService;
 import ru.solomka.identity.spring.configuration.properties.TokenPropertiesConfiguration;
+import ru.solomka.identity.token.RefreshTokenService;
 import ru.solomka.identity.token.TokenPairFactory;
 import ru.solomka.identity.user.UserService;
 
@@ -48,5 +50,10 @@ public class AuthenticationConfiguration {
                 userService,
                 encoderDelegate
         );
+    }
+
+    @Bean
+    LogoutCommandHandler logoutCommandHandler(@NonNull RefreshTokenService refreshTokenService) {
+        return new LogoutCommandHandler(refreshTokenService);
     }
 }

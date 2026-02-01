@@ -1,17 +1,18 @@
-package ru.solomka.identity.user.response.security;
-
+package ru.solomka.identity.authentication.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Getter
-@Builder
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @Schema(description = "JWT tokens issued after successful authentication")
-public class AuthenticationResponse {
+public class SigninResponse {
+
 
     @Schema(
             description = "Access token (JWT) for API authorization",
